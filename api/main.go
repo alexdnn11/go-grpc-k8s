@@ -1,13 +1,13 @@
-package api
+package main
 
 import (
 	"fmt"
+	"github.com/alexdnn11/go-grpc-k8s/pb"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 	"log"
 	"net/http"
 	"strconv"
-	"github.com/alexdnn11/go-grpc-k8s/pb"
 )
 
 func main() {
@@ -42,4 +42,3 @@ func main() {
 	})
 
 }
-

@@ -1,13 +1,13 @@
-package gcd
+package main
 
 import (
 	"log"
 	"net"
 	// Change this for your own project
+	"github.com/alexdnn11/go-grpc-k8s/pb"
 	context "golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
-	"github.com/alexdnn11/go-grpc-k8s/pb"
 )
 
 type server struct{}

@@ -1,7 +1,7 @@
-FROM golang:1.9.1
+FROM golang:1.11
 
 # Change this path!
-WORKDIR /go/src/github.com//alexdnn11/go-grpc-k8s/api
+WORKDIR $GOPATH/src/github.com/alexdnn11/go-grpc-k8s/api
 COPY api .
 COPY pb ../pb
 
