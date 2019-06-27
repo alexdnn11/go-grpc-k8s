@@ -1,6 +1,7 @@
 FROM golang:1.11
 
-# Change this path!
+MAINTAINER alexdnn11
+
 WORKDIR $GOPATH/src/github.com/alexdnn11/go-grpc-k8s/api
 COPY api .
 COPY pb ../pb

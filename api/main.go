@@ -41,4 +41,7 @@ func main() {
 		}
 	})
 
+	if err := r.Run("localhost:8080"); err != nil {
+		panic("Cannot serve!")
+	}
 }

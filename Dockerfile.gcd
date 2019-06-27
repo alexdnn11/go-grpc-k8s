@@ -1,5 +1,7 @@
 FROM golang:1.11
 
+MAINTAINER alexdnn11
+
 WORKDIR $GOPATH/src/github.com/alexdnn11/go-grpc-k8s/gcd
 COPY gcd .
 COPY pb ../pb
