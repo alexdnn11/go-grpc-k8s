@@ -5,3 +5,5 @@ services:
     image: local/gcd:latest
     ports:
       - "3000:3000"
+    networks:
+      - default
