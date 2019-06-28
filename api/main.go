@@ -24,6 +24,7 @@ func main() {
 	gcdClient := pb.NewGCDServiceClient(conn)
 
 	r := gin.Default()
+	fmt.Println("Api started!")
 	r.GET("/gcd/:a/:b", func(ctx *gin.Context) {
 		// Parse parameters
 		a, err := strconv.ParseUint(ctx.Param("a"), 10, 64)

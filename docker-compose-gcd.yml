@@ -1,0 +1,7 @@
+version: '2'
+services:
+  gcd:
+    container_name: gcd.example.com
+    image: local/gcd:latest
+    ports:
+      - "3000:3000"

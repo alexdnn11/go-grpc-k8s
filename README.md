@@ -1,9 +1,17 @@
 # go-grpc-k8s
 
-1) protoc -I pb/ pb/gcd.proto --go_out=plugins=grpc:pb
-2) docker build -t local/gcd -f Dockerfile.gcd .
-3) docker build -t local/api -f Dockerfile.api .
-4) sudo kubectl create -f api.yaml
-5) sudo kubectl create -f gcd.yaml
-6) sudo minikube service api-service --url
-7) curl http://[ip_addr]:[port]/gcd/294/462
+1. Install [protobuf compiler](https://github.com/google/protobuf/blob/master/README.md#protocol-compiler-installation)
+
+2. Install the protoc Go plugin
+
+   ```
+   $ go get -u github.com/golang/protobuf/protoc-gen-go
+
+3. make generate
+
+4. make up
+
+5. sudo kubectl create -f api.yaml
+6. sudo kubectl create -f gcd.yaml
+7. sudo minikube service api-service --url
+8. curl http://[ip_addr]:[port]/gcd/a/b

@@ -9,6 +9,6 @@ COPY pb ../pb
 RUN go get -v ./...
 RUN go install -v ./...
 
-EXPOSE 3000
+EXPOSE 8080
 
 CMD [ "api" ]
