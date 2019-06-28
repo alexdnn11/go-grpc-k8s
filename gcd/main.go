@@ -2,11 +2,10 @@ package main
 
 import (
 	"context"
-	"log"
-	"net"
-
 	pb "github.com/alexdnn11/go-grpc-k8s/pb"
 	"google.golang.org/grpc"
+	"log"
+	"net"
 )
 
 const (
