@@ -6,10 +6,7 @@ import (
 	"google.golang.org/grpc"
 	"log"
 	"net"
-)
-
-const (
-	port = ":3000"
+	"os"
 )
 
 type server struct{}
@@ -23,7 +20,13 @@ func (s *server) Compute(ctx context.Context, r *pb.GCDRequest) (*pb.GCDResponse
 }
 
 func main() {
-	lis, err := net.Listen("tcp", port)
+
+	var PORT_GRPC string
+	if PORT_GRPC = os.Getenv("PORT_GRPC"); PORT_GRPC == "" {
+		PORT_GRPC = "3000"
+	}
+
+	lis, err := net.Listen("tcp", PORT_GRPC)
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}

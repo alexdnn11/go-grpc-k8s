@@ -57,11 +57,8 @@ done
 
 if [ "${MODE}" == "up" ]; then
 
-  # Start api
-  docker-compose -f ./docker-compose-api.yml up -d
-
-  # Start gcd
-  docker-compose -f ./docker-compose-gcd.yml up -d
+  # Start all containers
+  docker-compose -f ./docker-compose.yml up -d
 
 elif [ "${MODE}" == "down" ]; then
   removeDockersWithDomain
@@ -75,4 +72,4 @@ fi
 
 endtime=$(date +%s)
 
-info "Finished in $(($endtime - $starttime)) seconds"
+echo "Finished in $(($endtime - $starttime)) seconds"

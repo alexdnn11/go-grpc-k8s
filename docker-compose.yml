@@ -1,0 +1,24 @@
+version: '2'
+services:
+  api:
+    container_name: api.example.com
+    build: .
+    command: go run main.go
+    image: local/api:latest
+    restart: always
+    ports:
+     - "8080:8080"
+    environment:
+      PORT_API: 8080
+      PORT_GRPC: 3001
+  gcd:
+    container_name: gcd.example.com
+    build: .
+    command: go run main.go
+    image: local/gcd:latest
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      PORT_GRPC: 3000
+

@@ -7,16 +7,20 @@ import (
 	"google.golang.org/grpc"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 )
 
-const (
-	grpcAddress = "localhost:3000"
-	hostAddress = "localhost:8080"
-)
-
 func main() {
-	conn, err := grpc.Dial(grpcAddress, grpc.WithInsecure())
+	var PORT_GRPC, PORT_API string
+	if PORT_GRPC = os.Getenv("PORT_GRPC"); PORT_GRPC == "" {
+		PORT_GRPC = "3000"
+	}
+	if PORT_API = os.Getenv("PORT_API"); PORT_API == "" {
+		PORT_GRPC = "8080"
+	}
+
+	conn, err := grpc.Dial("localhost:"+PORT_GRPC, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Dial failed: %v", err)
 	}
@@ -48,7 +52,7 @@ func main() {
 		}
 	})
 
-	if err := r.Run(hostAddress); err != nil {
+	if err := r.Run(":" + PORT_API); err != nil {
 		panic("Cannot serve!")
 	}
 }
