@@ -3,12 +3,11 @@ syntax = "proto3";
 package pb;
 
 message GCDRequest {
-  uint64 a = 1;
-  uint64 b = 2;
+  bytes attributes = 1;
 }
 
 message GCDResponse {
-  uint64 result = 1;
+  bytes result = 1;
 }
 
 service GCDService {

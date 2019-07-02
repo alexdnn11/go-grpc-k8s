@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/alexdnn11/go-grpc-k8s/pb"
 	"github.com/gin-gonic/gin"
@@ -8,8 +9,13 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 )
+
+type AttributeData struct {
+	AttributeName       string `json:"attributeName"`
+	AttributeValue      string `json:"attributeValue"`
+	AttributeDisclosure byte   `json:"attributeDisclosure"`
+}
 
 func main() {
 	var PORT_GRPC, PORT_API, GCD_SERVICE_NAME string
@@ -32,23 +38,31 @@ func main() {
 
 	r := gin.Default()
 	fmt.Println("Api started!")
-	r.GET("/gcd/:a/:b", func(ctx *gin.Context) {
-		// Parse parameters
-		a, err := strconv.ParseUint(ctx.Param("a"), 10, 64)
-		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid parameter A"})
-			return
+	r.POST("/compute", func(ctx *gin.Context) {
+		var attributes struct {
+			Attributes []AttributeData `json:"attributes"`
 		}
-		b, err := strconv.ParseUint(ctx.Param("b"), 10, 64)
+		err := ctx.BindJSON(&attributes)
 		if err != nil {
-			ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid parameter B"})
-			return
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+
+		attributesBytes, err := json.Marshal(attributes.Attributes)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		}
 		// Call GCD service
-		req := &pb.GCDRequest{A: a, B: b}
+		req := &pb.GCDRequest{Attributes: attributesBytes}
 		if res, err := gcdClient.Compute(ctx, req); err == nil {
+			var attributesArray []AttributeData
+			err := json.Unmarshal(res.Result, &attributesArray)
+			if err != nil {
+				message := fmt.Sprintf("Input json is invalid. Error \"%s\"", err.Error())
+				fmt.Println(message)
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			}
 			ctx.JSON(http.StatusOK, gin.H{
-				"result": fmt.Sprint(res.Result),
+				"result": fmt.Sprint(attributesArray),
 			})
 		} else {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

@@ -20,19 +20,26 @@ type AttributeData struct {
 }
 
 func (s *server) Compute(ctx context.Context, r *pb.GCDRequest) (*pb.GCDResponse, error) {
-	//a, b := r.A, r.B
-	//for b != 0 {
-	//	a, b = b, a%b
-	//}
+
 	var attributesArray []AttributeData
-	err := json.Unmarshal([]byte(r.attributes), &attributesArray)
+	err := json.Unmarshal([]byte(r.Attributes), &attributesArray)
 	if err != nil {
 		message := fmt.Sprintf("Input json is invalid. Error \"%s\"", err.Error())
 		fmt.Println(message)
-		return &pb.GCDResponse{Result: []byte{""}}, err
+		return &pb.GCDResponse{Result: nil}, err
+	}
+	for i, _ := range attributesArray {
+		attributesArray[i].AttributeName = "ECHO"
 	}
 
-	return &pb.GCDResponse{Result: a}, nil
+	result, err := json.Marshal(attributesArray)
+	if err != nil {
+		message := fmt.Sprintf("cannot marshal. Error \"%s\"", err.Error())
+		fmt.Println(message)
+		return &pb.GCDResponse{Result: nil}, err
+	}
+
+	return &pb.GCDResponse{Result: result}, nil
 }
 
 func main() {
