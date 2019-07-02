@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	pb "github.com/alexdnn11/go-grpc-k8s/pb"
 	"google.golang.org/grpc"
 	"log"
@@ -25,8 +26,9 @@ func main() {
 	if PORT_GRPC = os.Getenv("PORT_GRPC"); PORT_GRPC == "" {
 		PORT_GRPC = "3000"
 	}
+	fmt.Println(PORT_GRPC)
 
-	lis, err := net.Listen("tcp", PORT_GRPC)
+	lis, err := net.Listen("tcp", ":"+PORT_GRPC)
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}

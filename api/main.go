@@ -12,15 +12,18 @@ import (
 )
 
 func main() {
-	var PORT_GRPC, PORT_API string
+	var PORT_GRPC, PORT_API, GCD_SERVICE_NAME string
 	if PORT_GRPC = os.Getenv("PORT_GRPC"); PORT_GRPC == "" {
 		PORT_GRPC = "3000"
 	}
 	if PORT_API = os.Getenv("PORT_API"); PORT_API == "" {
 		PORT_GRPC = "8080"
 	}
+	if GCD_SERVICE_NAME = os.Getenv("GCD_SERVICE_NAME"); GCD_SERVICE_NAME == "" {
+		GCD_SERVICE_NAME = "localhost"
+	}
 
-	conn, err := grpc.Dial("localhost:"+PORT_GRPC, grpc.WithInsecure())
+	conn, err := grpc.Dial(GCD_SERVICE_NAME+":"+PORT_GRPC, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Dial failed: %v", err)
 	}

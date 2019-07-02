@@ -1,16 +1,5 @@
 version: '2'
 services:
-  api:
-    container_name: api.example.com
-    build: .
-    command: go run main.go
-    image: local/api:latest
-    restart: always
-    ports:
-     - "8080:8080"
-    environment:
-      PORT_API: 8080
-      PORT_GRPC: 3001
   gcd:
     container_name: gcd.example.com
     build: .
@@ -21,4 +10,19 @@ services:
       - "3000:3000"
     environment:
       PORT_GRPC: 3000
+
+  api:
+    container_name: api.example.com
+    build: .
+    command: go run main.go
+    image: local/api:latest
+    restart: always
+    depends_on:
+      - gcd
+    ports:
+     - "8080:8080"
+    environment:
+      PORT_API: 8080
+      PORT_GRPC: 3000
+      GCD_SERVICE_NAME: gcd
 
