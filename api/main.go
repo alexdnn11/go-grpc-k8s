@@ -85,7 +85,7 @@ func main() {
 		}
 		// Call GCD service
 		req := &pb.GCDRequest{Attributes: attributesBytes}
-		if res, err := gcdClient.Compute(ctx, req); err == nil {
+		if res, err := gcdClient.Generate(ctx, req); err == nil {
 			var proof Proof
 			err := json.Unmarshal(res.Result, &proof.Value)
 			if err != nil {
