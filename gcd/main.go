@@ -58,7 +58,7 @@ type AttributeData struct {
 	AttributeDisclosure int    `json:"attributeDisclosure"`
 }
 
-func (s *server) Generate(ctx context.Context, r *pb.GCDRequest) (*pb.GCDResponse, error) {
+func (s *server) Generate(ctx context.Context, r *pb.GenerateRequest) (*pb.GenerateResponse, error) {
 
 	proof := Proof{}
 
@@ -70,7 +70,7 @@ func (s *server) Generate(ctx context.Context, r *pb.GCDRequest) (*pb.GCDRespons
 	if err != nil {
 		message := fmt.Sprintf("Input json is invalid. Error \"%s\"", err.Error())
 		fmt.Println(message)
-		return &pb.GCDResponse{Result: nil}, err
+		return &pb.GenerateResponse{Result: nil}, err
 	}
 
 	AttributeNames := make([]string, len(attributesArray))
@@ -101,7 +101,7 @@ func (s *server) Generate(ctx context.Context, r *pb.GCDRequest) (*pb.GCDRespons
 	if attributesArray[rhindex].AttributeDisclosure != 0 {
 		message := fmt.Sprintf("Idemix requires the revocation handle to remain undisclosed (i.e., Disclosure[rhIndex] == 0). But we have \"%d\"", attributesArray[rhindex].AttributeDisclosure)
 		fmt.Println(message)
-		return &pb.GCDResponse{Result: nil}, errors.New(message)
+		return &pb.GenerateResponse{Result: nil}, errors.New(message)
 	}
 
 	// create a new key pair
@@ -109,7 +109,7 @@ func (s *server) Generate(ctx context.Context, r *pb.GCDRequest) (*pb.GCDRespons
 	if err != nil {
 		message := fmt.Sprintf("Issuer key generation should have succeeded but gave error \"%s\"", err.Error())
 		fmt.Println(message)
-		return &pb.GCDResponse{Result: nil}, errors.New(message)
+		return &pb.GenerateResponse{Result: nil}, errors.New(message)
 	}
 
 	// check that the key is valid
@@ -117,7 +117,7 @@ func (s *server) Generate(ctx context.Context, r *pb.GCDRequest) (*pb.GCDRespons
 	if err != nil {
 		message := fmt.Sprintf("Issuer public key should be valid")
 		fmt.Println(message)
-		return &pb.GCDResponse{Result: nil}, errors.New(message)
+		return &pb.GenerateResponse{Result: nil}, errors.New(message)
 	}
 
 	// issuance
@@ -136,7 +136,7 @@ func (s *server) Generate(ctx context.Context, r *pb.GCDRequest) (*pb.GCDRespons
 	if err != nil {
 		message := fmt.Sprintf("Create CRI return error: %s", err.Error())
 		fmt.Println(message)
-		return &pb.GCDResponse{Result: nil}, errors.New(message)
+		return &pb.GenerateResponse{Result: nil}, errors.New(message)
 	}
 
 	// signing selective disclosure
@@ -145,7 +145,7 @@ func (s *server) Generate(ctx context.Context, r *pb.GCDRequest) (*pb.GCDRespons
 	if err != nil {
 		message := fmt.Sprintf("Idemix NewSignature return error: %s", err.Error())
 		fmt.Println(message)
-		return &pb.GCDResponse{Result: nil}, errors.New(message)
+		return &pb.GenerateResponse{Result: nil}, errors.New(message)
 	}
 
 	attributeValuesBytes := make([][]byte, len(attrs))
@@ -166,18 +166,28 @@ func (s *server) Generate(ctx context.Context, r *pb.GCDRequest) (*pb.GCDRespons
 	proof.Value.DataForVerification.RevPk = encode(&revocationKey.PublicKey)
 	proof.Value.DataForVerification.Epoch = epoch
 
-	result, err := json.Marshal(proof.Value)
+	result, err := json.Marshal(proof)
 	if err != nil {
 		message := fmt.Sprintf("cannot marshal. Error \"%s\"", err.Error())
 		fmt.Println(message)
-		return &pb.GCDResponse{Result: nil}, err
+		return &pb.GenerateResponse{Result: nil}, err
 	}
 
-	return &pb.GCDResponse{Result: result}, nil
+	return &pb.GenerateResponse{Result: result}, nil
 }
 
-func (s *server) Verify(ctx context.Context, r *pb.GCDRequest) (*pb.GCDResponse, error) {
-	return &pb.GCDResponse{Result: nil}, nil
+func (s *server) Verify(ctx context.Context, r *pb.VerifyRequest) (*pb.VerifyResponse, error) {
+
+	proof := Proof{}
+
+	err := json.Unmarshal([]byte(r.Proof), &proof)
+	if err != nil {
+		message := fmt.Sprintf("Input json is invalid. Error \"%s\"", err.Error())
+		fmt.Println(message)
+		return &pb.VerifyResponse{Result: nil}, err
+	}
+
+	return &pb.VerifyResponse{Result: nil}, nil
 }
 
 func encode(publicKey *ecdsa.PublicKey) string {

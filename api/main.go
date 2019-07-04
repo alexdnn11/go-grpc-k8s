@@ -87,7 +87,7 @@ func main() {
 		req := &pb.GCDRequest{Attributes: attributesBytes}
 		if res, err := gcdClient.Generate(ctx, req); err == nil {
 			var proof Proof
-			err := json.Unmarshal(res.Result, &proof.Value)
+			err := json.Unmarshal(res.Result, &proof)
 			if err != nil {
 				message := fmt.Sprintf("Input json is invalid. Error \"%s\"", err.Error())
 				fmt.Println(message)
