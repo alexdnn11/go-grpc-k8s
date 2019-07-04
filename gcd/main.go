@@ -184,7 +184,7 @@ func (s *server) Verify(ctx context.Context, r *pb.VerifyRequest) (*pb.VerifyRes
 	if err != nil {
 		message := fmt.Sprintf("Input json is invalid. Error \"%s\"", err.Error())
 		fmt.Println(message)
-		return &pb.VerifyResponse{Result: nil}, err
+		return &pb.VerifyResponse{Result: false}, err
 	}
 
 	attributeValuesBytes := make([]*FP256BN.BIG, len(proof.Value.DataForVerification.AttributeValuesHash))

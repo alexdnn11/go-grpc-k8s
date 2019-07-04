@@ -102,13 +102,15 @@ func main() {
 	})
 
 	r.POST("/verify", func(ctx *gin.Context) {
-		var proof Proof
+		var proof struct {
+			Proof Proof `json:"proof"`
+		}
 		err := ctx.BindJSON(&proof)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		}
 
-		proofBytes, err := json.Marshal(proof)
+		proofBytes, err := json.Marshal(proof.Proof)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		}
