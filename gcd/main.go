@@ -166,7 +166,7 @@ func (s *server) Compute(ctx context.Context, r *pb.GCDRequest) (*pb.GCDResponse
 	proof.Value.DataForVerification.RevPk = encode(&revocationKey.PublicKey)
 	proof.Value.DataForVerification.Epoch = epoch
 
-	result, err := json.Marshal(proof)
+	result, err := json.Marshal(proof.Value)
 	if err != nil {
 		message := fmt.Sprintf("cannot marshal. Error \"%s\"", err.Error())
 		fmt.Println(message)
