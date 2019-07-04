@@ -187,7 +187,26 @@ func (s *server) Verify(ctx context.Context, r *pb.VerifyRequest) (*pb.VerifyRes
 		return &pb.VerifyResponse{Result: nil}, err
 	}
 
-	return &pb.VerifyResponse{Result: nil}, nil
+	attributeValuesBytes := make([]*FP256BN.BIG, len(proof.Value.DataForVerification.AttributeValuesHash))
+
+	for i := range proof.Value.DataForVerification.AttributeValuesHash {
+		attributeValuesBytes[i] = FP256BN.FromBytes(proof.Value.DataForVerification.AttributeValuesHash[i])
+	}
+	err = proof.Value.SnapShot.Ver(proof.Value.DataForVerification.Disclosure,
+		proof.Value.DataForVerification.Ipk,
+		proof.Value.DataForVerification.Msg,
+		attributeValuesBytes,
+		proof.Value.DataForVerification.RhIndex,
+		decode(proof.Value.DataForVerification.RevPk),
+		proof.Value.DataForVerification.Epoch)
+
+	if err != nil {
+		message := fmt.Sprintf("Signature verification was failed. Error: %s", err.Error())
+		fmt.Println(message)
+		return &pb.VerifyResponse{Result: false}, err
+	}
+
+	return &pb.VerifyResponse{Result: true}, nil
 }
 
 func encode(publicKey *ecdsa.PublicKey) string {

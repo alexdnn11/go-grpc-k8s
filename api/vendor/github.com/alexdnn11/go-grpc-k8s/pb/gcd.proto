@@ -2,17 +2,25 @@ syntax = "proto3";
 
 package pb;
 
-message GCDRequest {
+message GenerateRequest {
     bytes attributes = 1;
 }
 
-message GCDResponse {
+message GenerateResponse {
     bytes result = 1;
 }
 
+message VerifyRequest {
+    bytes proof = 1;
+}
+
+message VerifyResponse {
+    bool result = 1;
+}
+
 service GCDService {
-    rpc Generate (GCDRequest) returns (GCDResponse) {
+    rpc Generate (GenerateRequest) returns (GenerateResponse) {
     }
-    rpc Verify (GCDRequest) returns (GCDResponse) {
+    rpc Verify (VerifyRequest) returns (VerifyResponse) {
     }
 }

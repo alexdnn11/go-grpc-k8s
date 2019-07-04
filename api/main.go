@@ -84,7 +84,7 @@ func main() {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		}
 		// Call GCD service
-		req := &pb.GCDRequest{Attributes: attributesBytes}
+		req := &pb.GenerateRequest{Attributes: attributesBytes}
 		if res, err := gcdClient.Generate(ctx, req); err == nil {
 			var proof Proof
 			err := json.Unmarshal(res.Result, &proof)
@@ -95,6 +95,28 @@ func main() {
 			}
 			ctx.JSON(http.StatusOK, gin.H{
 				"result": fmt.Sprint(proof),
+			})
+		} else {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+	})
+
+	r.POST("/verify", func(ctx *gin.Context) {
+		var proof Proof
+		err := ctx.BindJSON(&proof)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+
+		proofBytes, err := json.Marshal(proof)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+		// Call GCD service
+		req := &pb.VerifyRequest{Proof: proofBytes}
+		if res, err := gcdClient.Verify(ctx, req); err == nil {
+			ctx.JSON(http.StatusOK, gin.H{
+				"result": res.Result,
 			})
 		} else {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

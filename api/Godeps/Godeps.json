@@ -8,7 +8,7 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/alexdnn11/go-grpc-k8s/pb",
-			"Rev": "e260ea713208d8ca0225ef7c16d50d29a16b8d4a"
+			"Rev": "4c92f69d6a4b5720bd58368f88bce8ea2943d7d3"
 		},
 		{
 			"ImportPath": "github.com/gin-contrib/sse",
