@@ -58,7 +58,7 @@ type AttributeData struct {
 	AttributeDisclosure byte   `json:"attributeDisclosure"`
 }
 
-func (s *server) Compute(ctx context.Context, r *pb.GCDRequest) (*pb.GCDResponse, error) {
+func (s *server) Generate(ctx context.Context, r *pb.GCDRequest) (*pb.GCDResponse, error) {
 
 	proof := Proof{}
 
@@ -174,6 +174,10 @@ func (s *server) Compute(ctx context.Context, r *pb.GCDRequest) (*pb.GCDResponse
 	}
 
 	return &pb.GCDResponse{Result: result}, nil
+}
+
+func (s *server) Verify(ctx context.Context, r *pb.GCDRequest) (*pb.GCDResponse, error) {
+	return &pb.GCDResponse{Result: nil}, nil
 }
 
 func encode(publicKey *ecdsa.PublicKey) string {
