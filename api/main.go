@@ -5,11 +5,43 @@ import (
 	"fmt"
 	"github.com/alexdnn11/go-grpc-k8s/pb"
 	"github.com/gin-gonic/gin"
+	"github.com/hyperledger/fabric/idemix"
 	"google.golang.org/grpc"
 	"log"
 	"net/http"
 	"os"
 )
+
+type ProofKey struct {
+	ID string `json:"id"`
+}
+
+type ProofValue struct {
+	SnapShot            *idemix.Signature        `json:"snapShot"`
+	DataForVerification ProofDataForVerification `json:"dataForVerification"`
+	State               int                      `json:"state"`
+	ConsignorName       string                   `json:"consignorName"`
+	Owner               string                   `json:"owner"`
+	Timestamp           int64                    `json:"timestamp"`
+	ShipmentID          string                   `json:"shipmentID"`
+	UpdatedDate         int64                    `json:"updatedDate"`
+}
+
+type ProofDataForVerification struct {
+	Disclosure          []byte                  `json:"disclosure"`
+	Ipk                 *idemix.IssuerPublicKey `json:"ipk"`
+	Msg                 []byte                  `json:"msg"`
+	AttributeValuesHash [][]byte                `json:"attributeValuesHash"`
+	AttributeValues     []string                `json:"attributeValues"`
+	RhIndex             int                     `json:"rhIndex"`
+	RevPk               string                  `json:"revPk"`
+	Epoch               int                     `json:"epoch"`
+}
+
+type Proof struct {
+	Key   ProofKey   `json:"key"`
+	Value ProofValue `json:"value"`
+}
 
 type AttributeData struct {
 	AttributeName       string `json:"attributeName"`
@@ -54,15 +86,15 @@ func main() {
 		// Call GCD service
 		req := &pb.GCDRequest{Attributes: attributesBytes}
 		if res, err := gcdClient.Compute(ctx, req); err == nil {
-			var attributesArray []AttributeData
-			err := json.Unmarshal(res.Result, &attributesArray)
+			var proof []Proof
+			err := json.Unmarshal(res.Result, &proof)
 			if err != nil {
 				message := fmt.Sprintf("Input json is invalid. Error \"%s\"", err.Error())
 				fmt.Println(message)
 				ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			}
 			ctx.JSON(http.StatusOK, gin.H{
-				"result": fmt.Sprint(attributesArray),
+				"result": fmt.Sprint(proof),
 			})
 		} else {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

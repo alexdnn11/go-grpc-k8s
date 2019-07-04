@@ -2,8 +2,11 @@ package main
 
 import (
 	"context"
+	"crypto/ecdsa"
 	"crypto/sha256"
+	"crypto/x509"
 	"encoding/json"
+	"encoding/pem"
 	"errors"
 	"fmt"
 	pb "github.com/alexdnn11/go-grpc-k8s/pb"
@@ -18,6 +21,37 @@ import (
 
 type server struct{}
 
+type ProofKey struct {
+	ID string `json:"id"`
+}
+
+type ProofValue struct {
+	SnapShot            *idemix.Signature        `json:"snapShot"`
+	DataForVerification ProofDataForVerification `json:"dataForVerification"`
+	State               int                      `json:"state"`
+	ConsignorName       string                   `json:"consignorName"`
+	Owner               string                   `json:"owner"`
+	Timestamp           int64                    `json:"timestamp"`
+	ShipmentID          string                   `json:"shipmentID"`
+	UpdatedDate         int64                    `json:"updatedDate"`
+}
+
+type ProofDataForVerification struct {
+	Disclosure          []byte                  `json:"disclosure"`
+	Ipk                 *idemix.IssuerPublicKey `json:"ipk"`
+	Msg                 []byte                  `json:"msg"`
+	AttributeValuesHash [][]byte                `json:"attributeValuesHash"`
+	AttributeValues     []string                `json:"attributeValues"`
+	RhIndex             int                     `json:"rhIndex"`
+	RevPk               string                  `json:"revPk"`
+	Epoch               int                     `json:"epoch"`
+}
+
+type Proof struct {
+	Key   ProofKey   `json:"key"`
+	Value ProofValue `json:"value"`
+}
+
 type AttributeData struct {
 	AttributeName       string `json:"attributeName"`
 	AttributeValue      string `json:"attributeValue"`
@@ -25,6 +59,8 @@ type AttributeData struct {
 }
 
 func (s *server) Compute(ctx context.Context, r *pb.GCDRequest) (*pb.GCDResponse, error) {
+
+	proof := Proof{}
 
 	// making arrays of attributes names and values
 	rng, err := idemix.GetRand()
@@ -120,7 +156,17 @@ func (s *server) Compute(ctx context.Context, r *pb.GCDRequest) (*pb.GCDResponse
 		attributeValuesBytes[i] = row
 	}
 
-	result, err := json.Marshal(attributesArray)
+	proof.Value.SnapShot = sig
+	proof.Value.DataForVerification.Disclosure = disclosure
+	proof.Value.DataForVerification.Ipk = key.Ipk
+	proof.Value.DataForVerification.Msg = msg
+	proof.Value.DataForVerification.AttributeValuesHash = attributeValuesBytes
+	proof.Value.DataForVerification.AttributeValues = attributeValues
+	proof.Value.DataForVerification.RhIndex = rhindex
+	proof.Value.DataForVerification.RevPk = encode(&revocationKey.PublicKey)
+	proof.Value.DataForVerification.Epoch = epoch
+
+	result, err := json.Marshal(proof)
 	if err != nil {
 		message := fmt.Sprintf("cannot marshal. Error \"%s\"", err.Error())
 		fmt.Println(message)
@@ -128,6 +174,22 @@ func (s *server) Compute(ctx context.Context, r *pb.GCDRequest) (*pb.GCDResponse
 	}
 
 	return &pb.GCDResponse{Result: result}, nil
+}
+
+func encode(publicKey *ecdsa.PublicKey) string {
+	x509EncodedPub, _ := x509.MarshalPKIXPublicKey(publicKey)
+	pemEncodedPub := pem.EncodeToMemory(&pem.Block{Type: "PUBLIC KEY", Bytes: x509EncodedPub})
+
+	return string(pemEncodedPub)
+}
+
+func decode(pemEncodedPub string) *ecdsa.PublicKey {
+	blockPub, _ := pem.Decode([]byte(pemEncodedPub))
+	x509EncodedPub := blockPub.Bytes
+	genericPublicKey, _ := x509.ParsePKIXPublicKey(x509EncodedPub)
+	publicKey := genericPublicKey.(*ecdsa.PublicKey)
+
+	return publicKey
 }
 
 func main() {
