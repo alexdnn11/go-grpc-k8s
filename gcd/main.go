@@ -55,7 +55,7 @@ type Proof struct {
 type AttributeData struct {
 	AttributeName       string `json:"attributeName"`
 	AttributeValue      string `json:"attributeValue"`
-	AttributeDisclosure byte   `json:"attributeDisclosure"`
+	AttributeDisclosure int    `json:"attributeDisclosure"`
 }
 
 func (s *server) Generate(ctx context.Context, r *pb.GCDRequest) (*pb.GCDResponse, error) {
@@ -86,7 +86,7 @@ func (s *server) Generate(ctx context.Context, r *pb.GCDRequest) (*pb.GCDRespons
 		h.Write([]byte(attributesArray[i].AttributeValue))
 		attrs[i] = FP256BN.FromBytes(h.Sum(nil))
 		AttributeNames[i] = attributesArray[i].AttributeName
-		disclosure[i] = attributesArray[i].AttributeDisclosure
+		disclosure[i] = byte(attributesArray[i].AttributeDisclosure)
 		msg[i] = byte(i)
 		if attributesArray[i].AttributeDisclosure == 0 {
 			rhindex = i

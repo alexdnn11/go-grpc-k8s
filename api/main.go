@@ -46,7 +46,7 @@ type Proof struct {
 type AttributeData struct {
 	AttributeName       string `json:"attributeName"`
 	AttributeValue      string `json:"attributeValue"`
-	AttributeDisclosure byte   `json:"attributeDisclosure"`
+	AttributeDisclosure int    `json:"attributeDisclosure"`
 }
 
 func main() {
@@ -70,7 +70,7 @@ func main() {
 
 	r := gin.Default()
 	fmt.Println("Api started!")
-	r.POST("/compute", func(ctx *gin.Context) {
+	r.POST("/generate", func(ctx *gin.Context) {
 		var attributes struct {
 			Attributes []AttributeData `json:"attributes"`
 		}
