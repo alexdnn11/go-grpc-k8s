@@ -8,7 +8,7 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/alexdnn11/go-grpc-k8s/pb",
-			"Rev": "efc9fb3d6b1682c708dfd718cf68567be311fd6d"
+			"Rev": "e260ea713208d8ca0225ef7c16d50d29a16b8d4a"
 		},
 		{
 			"ImportPath": "github.com/golang/protobuf/proto",
@@ -339,6 +339,86 @@
 			"ImportPath": "google.golang.org/grpc/tap",
 			"Comment": "v1.2.0-954-g7472edc",
 			"Rev": "7472edcc1efb431d7483c37b901c08bb33788b7c"
+		},
+		{
+			"ImportPath": "github.com/hyperledger/fabric/vendor/github.com/op/go-logging",
+			"Comment": "v1.4.1-9-g715c6ec33",
+			"Rev": "715c6ec339ec46583020ec6783726d3e4502ddba"
+		},
+		{
+			"ImportPath": "github.com/hyperledger/fabric/vendor/github.com/pkg/errors",
+			"Comment": "v1.4.1-9-g715c6ec33",
+			"Rev": "715c6ec339ec46583020ec6783726d3e4502ddba"
+		},
+		{
+			"ImportPath": "github.com/hyperledger/fabric/vendor/github.com/sykesm/zap-logfmt",
+			"Comment": "v1.4.1-9-g715c6ec33",
+			"Rev": "715c6ec339ec46583020ec6783726d3e4502ddba"
+		},
+		{
+			"ImportPath": "github.com/hyperledger/fabric/vendor/go.uber.org/zap",
+			"Comment": "v1.4.1-9-g715c6ec33",
+			"Rev": "715c6ec339ec46583020ec6783726d3e4502ddba"
+		},
+		{
+			"ImportPath": "github.com/hyperledger/fabric/vendor/go.uber.org/zap/zapcore",
+			"Comment": "v1.4.1-9-g715c6ec33",
+			"Rev": "715c6ec339ec46583020ec6783726d3e4502ddba"
+		},
+		{
+			"ImportPath": "github.com/hyperledger/fabric/vendor/go.uber.org/zap/zapgrpc",
+			"Comment": "v1.4.1-9-g715c6ec33",
+			"Rev": "715c6ec339ec46583020ec6783726d3e4502ddba"
+		},
+		{
+			"ImportPath": "github.com/hyperledger/fabric/vendor/google.golang.org/grpc/grpclog",
+			"Comment": "v1.4.1-9-g715c6ec33",
+			"Rev": "715c6ec339ec46583020ec6783726d3e4502ddba"
+		},
+		{
+			"ImportPath": "github.com/hyperledger/fabric/vendor/go.uber.org/zap/buffer",
+			"Comment": "v1.4.1-9-g715c6ec33",
+			"Rev": "715c6ec339ec46583020ec6783726d3e4502ddba"
+		},
+		{
+			"ImportPath": "github.com/hyperledger/fabric/vendor/go.uber.org/atomic",
+			"Comment": "v1.4.1-9-g715c6ec33",
+			"Rev": "715c6ec339ec46583020ec6783726d3e4502ddba"
+		},
+		{
+			"ImportPath": "github.com/hyperledger/fabric/vendor/go.uber.org/multierr",
+			"Comment": "v1.4.1-9-g715c6ec33",
+			"Rev": "715c6ec339ec46583020ec6783726d3e4502ddba"
+		},
+		{
+			"ImportPath": "github.com/hyperledger/fabric/vendor/go.uber.org/zap/internal/bufferpool",
+			"Comment": "v1.4.1-9-g715c6ec33",
+			"Rev": "715c6ec339ec46583020ec6783726d3e4502ddba"
+		},
+		{
+			"ImportPath": "github.com/hyperledger/fabric/vendor/go.uber.org/zap/internal/color",
+			"Comment": "v1.4.1-9-g715c6ec33",
+			"Rev": "715c6ec339ec46583020ec6783726d3e4502ddba"
+		},
+		{
+			"ImportPath": "github.com/hyperledger/fabric/vendor/go.uber.org/zap/internal/exit",
+			"Comment": "v1.4.1-9-g715c6ec33",
+			"Rev": "715c6ec339ec46583020ec6783726d3e4502ddba"
+		},
+		{
+			"ImportPath": "github.com/hyperledger/fabric/vendor/github.com/golang/protobuf/proto",
+			"Comment": "v1.4.1-9-g715c6ec33",
+			"Rev": "715c6ec339ec46583020ec6783726d3e4502ddba"
+		},
+		{
+			"ImportPath": "github.com/hyperledger/fabric/vendor/github.com/hyperledger/fabric-amcl/amcl",
+			"Comment": "v1.4.1-9-g715c6ec33",
+			"Rev": "715c6ec339ec46583020ec6783726d3e4502ddba"
+		},
+		{
+			"ImportPath": "github.com/hyperledger/fabric/vendor/github.com/hyperledger/fabric-amcl/amcl/FP256BN",
+			"Comment": "v1.4.1-9-g715c6ec33",
+			"Rev": "715c6ec339ec46583020ec6783726d3e4502ddba"
 		}
 	]
 }
