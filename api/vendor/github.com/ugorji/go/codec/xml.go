@@ -5,6 +5,8 @@
 
 package codec
 
+import "reflect"
+
 /*
 
 A strict Non-validating namespace-aware XML 1.0 parser and (en|de)coder.
@@ -496,6 +498,10 @@ func (h *XMLHandle) newDecDriver(d *Decoder) decDriver {
 	hd := xmlDecDriver{d: d, r: d.r, h: h}
 	hd.n.bytes = d.b[:]
 	return &hd
+}
+
+func (h *XMLHandle) SetInterfaceExt(rt reflect.Type, tag uint64, ext InterfaceExt) (err error) {
+	return h.SetExt(rt, tag, &extWrapper{bytesExtFailer{}, ext})
 }
 
 var _ decDriver = (*xmlDecDriver)(nil)

@@ -8,9 +8,11 @@ package idemix
 
 import (
 	"crypto/ecdsa"
-	"crypto/elliptic"
+
 	"crypto/rand"
 	"crypto/sha256"
+
+	"crypto/elliptic"
 
 	"github.com/golang/protobuf/proto"
 	"github.com/hyperledger/fabric-amcl/amcl"

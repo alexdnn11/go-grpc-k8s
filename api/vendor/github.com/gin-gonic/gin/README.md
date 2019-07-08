@@ -119,6 +119,10 @@ $ curl https://raw.githubusercontent.com/gin-gonic/examples/master/basic/main.go
 $ go run main.go
 ```
 
+## Prerequisite
+
+Now Gin requires Go 1.6 or later and Go 1.7 will be required soon.
+
 ## Quick start
  
 ```sh
@@ -250,11 +254,6 @@ func main() {
 		action := c.Param("action")
 		message := name + " is " + action
 		c.String(http.StatusOK, message)
-	})
-
-	// For each matched request Context will hold the route definition
-	router.POST("/user/:name/*action", func(c *gin.Context) {
-		c.FullPath() == "/user/:name/*action" // true
 	})
 
 	router.Run(":8080")
@@ -959,36 +958,32 @@ result:
 ### Multipart/Urlencoded binding
 
 ```go
-type ProfileForm struct {
-	Name   string                `form:"name" binding:"required"`
-	Avatar *multipart.FileHeader `form:"avatar" binding:"required"`
+package main
 
-	// or for multiple files
-	// Avatars []*multipart.FileHeader `form:"avatar" binding:"required"`
+import (
+	"github.com/gin-gonic/gin"
+)
+
+type LoginForm struct {
+	User     string `form:"user" binding:"required"`
+	Password string `form:"password" binding:"required"`
 }
 
 func main() {
 	router := gin.Default()
-	router.POST("/profile", func(c *gin.Context) {
+	router.POST("/login", func(c *gin.Context) {
 		// you can bind multipart form with explicit binding declaration:
 		// c.ShouldBindWith(&form, binding.Form)
 		// or you can simply use autobinding with ShouldBind method:
-		var form ProfileForm
+		var form LoginForm
 		// in this case proper binding will be automatically selected
-		if err := c.ShouldBind(&form); err != nil {
-			c.String(http.StatusBadRequest, "bad request")
-			return
+		if c.ShouldBind(&form) == nil {
+			if form.User == "user" && form.Password == "password" {
+				c.JSON(200, gin.H{"status": "you are logged in"})
+			} else {
+				c.JSON(401, gin.H{"status": "unauthorized"})
+			}
 		}
-
-		err := c.SaveUploadedFile(form.Avatar, form.Avatar.Filename)
-		if err != nil {
-			c.String(http.StatusInternalServerError, "unknown error")
-			return
-		}
-
-		// db.Save(&form)
-
-		c.String(http.StatusOK, "ok")
 	})
 	router.Run(":8080")
 }
@@ -996,7 +991,7 @@ func main() {
 
 Test it with:
 ```sh
-$ curl -X POST -v --form name=user --form "avatar=@./avatar.png" http://localhost:8080/profile
+$ curl -v --form user=user --form password=password http://localhost:8080/login
 ```
 
 ### XML, JSON, YAML and ProtoBuf rendering
@@ -1703,7 +1698,7 @@ func main() {
 	quit := make(chan os.Signal)
 	// kill (no param) default send syscall.SIGTERM
 	// kill -2 is syscall.SIGINT
-	// kill -9 is syscall.SIGKILL but can't be catch, so don't need add it
+	// kill -9 is syscall.SIGKILL but can"t be catch, so don't need add it
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	log.Println("Shutdown Server ...")

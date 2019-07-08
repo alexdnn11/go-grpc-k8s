@@ -9,7 +9,7 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
-	pb "github.com/alexdnn11/go-grpc-k8s/pb"
+	"github.com/alexdnn11/go-grpc-k8s/pb"
 	"github.com/hyperledger/fabric-amcl/amcl/FP256BN"
 	"github.com/hyperledger/fabric/idemix"
 	"google.golang.org/grpc"
@@ -26,7 +26,7 @@ type ProofKey struct {
 }
 
 type ProofValue struct {
-	SnapShot            *idemix.Signature        `json:"snapShot"`
+	Signature           []byte                   `json:"signature"`
 	DataForVerification ProofDataForVerification `json:"dataForVerification"`
 	State               int                      `json:"state"`
 	ConsignorName       string                   `json:"consignorName"`
@@ -37,14 +37,14 @@ type ProofValue struct {
 }
 
 type ProofDataForVerification struct {
-	Disclosure          []byte                  `json:"disclosure"`
-	Ipk                 *idemix.IssuerPublicKey `json:"ipk"`
-	Msg                 []byte                  `json:"msg"`
-	AttributeValuesHash [][]byte                `json:"attributeValuesHash"`
-	AttributeValues     []string                `json:"attributeValues"`
-	RhIndex             int                     `json:"rhIndex"`
-	RevPk               string                  `json:"revPk"`
-	Epoch               int                     `json:"epoch"`
+	Disclosure          []byte   `json:"disclosure"`
+	Ipk                 []byte   `json:"ipk"`
+	Msg                 []byte   `json:"msg"`
+	AttributeValuesHash [][]byte `json:"attributeValuesHash"`
+	AttributeValues     []string `json:"attributeValues"`
+	RhIndex             int      `json:"rhIndex"`
+	RevPk               string   `json:"revPk"`
+	Epoch               int      `json:"epoch"`
 }
 
 type Proof struct {
@@ -123,7 +123,7 @@ func (s *server) Generate(ctx context.Context, r *pb.GenerateRequest) (*pb.Gener
 	// issuance
 	sk := idemix.RandModOrder(rng)
 	ni := idemix.RandModOrder(rng)
-	m := idemix.NewCredRequest(sk, idemix.BigToBytes(ni), key.Ipk, rng)
+	m := idemix.NewCredRequest(sk, ni, key.Ipk, rng)
 
 	cred, err := idemix.NewCredential(key, m, attrs, rng)
 
@@ -156,9 +156,23 @@ func (s *server) Generate(ctx context.Context, r *pb.GenerateRequest) (*pb.Gener
 		attributeValuesBytes[i] = row
 	}
 
-	proof.Value.SnapShot = sig
+	sigBytes, err := json.Marshal(sig)
+	if err != nil {
+		message := fmt.Sprintf("Signature marshaling error: %s", err.Error())
+		fmt.Println(message)
+		return &pb.GenerateResponse{Result: nil}, errors.New(message)
+	}
+
+	ipkBytes, err := json.Marshal(key.Ipk)
+	if err != nil {
+		message := fmt.Sprintf("Ipk marshaling error: %s", err.Error())
+		fmt.Println(message)
+		return &pb.GenerateResponse{Result: nil}, errors.New(message)
+	}
+
+	proof.Value.Signature = sigBytes
 	proof.Value.DataForVerification.Disclosure = disclosure
-	proof.Value.DataForVerification.Ipk = key.Ipk
+	proof.Value.DataForVerification.Ipk = ipkBytes
 	proof.Value.DataForVerification.Msg = msg
 	proof.Value.DataForVerification.AttributeValuesHash = attributeValuesBytes
 	proof.Value.DataForVerification.AttributeValues = attributeValues
@@ -187,16 +201,30 @@ func (s *server) Verify(ctx context.Context, r *pb.VerifyRequest) (*pb.VerifyRes
 		return &pb.VerifyResponse{Result: false}, err
 	}
 
-	fmt.Println("Debug")
-	fmt.Println(proof)
+	var sig *idemix.Signature
+	var ipk *idemix.IssuerPublicKey
+
+	err = json.Unmarshal([]byte(proof.Value.Signature), &sig)
+	if err != nil {
+		message := fmt.Sprintf("Input json is invalid. Error \"%s\"", err.Error())
+		fmt.Println(message)
+		return &pb.VerifyResponse{Result: false}, err
+	}
+
+	err = json.Unmarshal([]byte(proof.Value.DataForVerification.Ipk), &ipk)
+	if err != nil {
+		message := fmt.Sprintf("Input json is invalid. Error \"%s\"", err.Error())
+		fmt.Println(message)
+		return &pb.VerifyResponse{Result: false}, err
+	}
 
 	attributeValuesBytes := make([]*FP256BN.BIG, len(proof.Value.DataForVerification.AttributeValuesHash))
 
 	for i := range proof.Value.DataForVerification.AttributeValuesHash {
 		attributeValuesBytes[i] = FP256BN.FromBytes(proof.Value.DataForVerification.AttributeValuesHash[i])
 	}
-	err = proof.Value.SnapShot.Ver(proof.Value.DataForVerification.Disclosure,
-		proof.Value.DataForVerification.Ipk,
+	err = sig.Ver(proof.Value.DataForVerification.Disclosure,
+		ipk,
 		proof.Value.DataForVerification.Msg,
 		attributeValuesBytes,
 		proof.Value.DataForVerification.RhIndex,

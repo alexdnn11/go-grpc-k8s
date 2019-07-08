@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/alexdnn11/go-grpc-k8s/pb"
 	"github.com/gin-gonic/gin"
-	"github.com/hyperledger/fabric/idemix"
 	"google.golang.org/grpc"
 	"log"
 	"net/http"
@@ -17,7 +16,7 @@ type ProofKey struct {
 }
 
 type ProofValue struct {
-	SnapShot            *idemix.Signature        `json:"snapShot"`
+	Signature           []byte                   `json:"signature"`
 	DataForVerification ProofDataForVerification `json:"dataForVerification"`
 	State               int                      `json:"state"`
 	ConsignorName       string                   `json:"consignorName"`
@@ -28,14 +27,14 @@ type ProofValue struct {
 }
 
 type ProofDataForVerification struct {
-	Disclosure          []byte                  `json:"disclosure"`
-	Ipk                 *idemix.IssuerPublicKey `json:"ipk"`
-	Msg                 []byte                  `json:"msg"`
-	AttributeValuesHash [][]byte                `json:"attributeValuesHash"`
-	AttributeValues     []string                `json:"attributeValues"`
-	RhIndex             int                     `json:"rhIndex"`
-	RevPk               string                  `json:"revPk"`
-	Epoch               int                     `json:"epoch"`
+	Disclosure          []byte   `json:"disclosure"`
+	Ipk                 []byte   `json:"ipk"`
+	Msg                 []byte   `json:"msg"`
+	AttributeValuesHash [][]byte `json:"attributeValuesHash"`
+	AttributeValues     []string `json:"attributeValues"`
+	RhIndex             int      `json:"rhIndex"`
+	RevPk               string   `json:"revPk"`
+	Epoch               int      `json:"epoch"`
 }
 
 type Proof struct {
@@ -82,6 +81,7 @@ func main() {
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		}
+
 		// Call GCD service
 		req := &pb.GenerateRequest{Attributes: attributesBytes}
 		if res, err := gcdClient.Generate(ctx, req); err == nil {
