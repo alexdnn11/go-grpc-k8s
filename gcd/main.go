@@ -187,6 +187,9 @@ func (s *server) Verify(ctx context.Context, r *pb.VerifyRequest) (*pb.VerifyRes
 		return &pb.VerifyResponse{Result: false}, err
 	}
 
+	fmt.Println("Debug")
+	fmt.Println(proof)
+
 	attributeValuesBytes := make([]*FP256BN.BIG, len(proof.Value.DataForVerification.AttributeValuesHash))
 
 	for i := range proof.Value.DataForVerification.AttributeValuesHash {

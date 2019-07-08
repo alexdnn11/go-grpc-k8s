@@ -69,7 +69,6 @@ func main() {
 	gcdClient := pb.NewGCDServiceClient(conn)
 
 	r := gin.Default()
-	fmt.Println("Api started!")
 	r.POST("/generate", func(ctx *gin.Context) {
 		var attributes struct {
 			Attributes []AttributeData `json:"attributes"`
@@ -94,7 +93,7 @@ func main() {
 				ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			}
 			ctx.JSON(http.StatusOK, gin.H{
-				"result": fmt.Sprint(proof),
+				"result": proof,
 			})
 		} else {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -102,6 +101,7 @@ func main() {
 	})
 
 	r.POST("/verify", func(ctx *gin.Context) {
+
 		var proof struct {
 			Proof Proof `json:"proof"`
 		}
@@ -109,7 +109,6 @@ func main() {
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		}
-
 		proofBytes, err := json.Marshal(proof.Proof)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

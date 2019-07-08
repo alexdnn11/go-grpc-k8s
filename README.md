@@ -15,3 +15,5 @@
 6. sudo kubectl create -f gcd.yaml
 7. sudo minikube service api-service --url
 8. curl http://[ip_addr]:[port]/gcd/a/b
+
+9. Postman collections: https://www.getpostman.com/collections/a69e637db692ce39cbd2
