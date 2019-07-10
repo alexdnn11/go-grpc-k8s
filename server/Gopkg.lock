@@ -3,22 +3,20 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:43e29e60d4eb18c5c0a9480b87546c703f11e8fbf16ba2e2baacfd1dcf01f4eb"
+  digest = "1:005845848d5bb631cfe0dcae3e089332a8b5525cfd7c76aa21ef95cc7a2ec841"
   name = "github.com/alexdnn11/go-grpc-k8s"
   packages = ["pb"]
   pruneopts = "UT"
-  revision = "626557ed5becaf4e507b0a617eac2c2960f4e42d"
+  revision = "de31128587e71471d4381b56c10cb36d230e45e0"
 
 [[projects]]
-  digest = "1:549b3770feea703d7cf55822b7b2e1b1afce35ea5034d9a1388249f3c65fbb98"
+  digest = "1:f5ce1529abc1204444ec73779f44f94e2fa8fcdb7aca3c355b0c95947e4005c6"
   name = "github.com/golang/protobuf"
   packages = [
-    "jsonpb",
     "proto",
     "ptypes",
     "ptypes/any",
     "ptypes/duration",
-    "ptypes/struct",
     "ptypes/timestamp",
   ]
   pruneopts = "UT"
@@ -72,18 +70,6 @@
   version = "v1.4.2"
 
 [[projects]]
-  digest = "1:e08f2d2b7f85d730396863cd81217a6301eb43c05f9abcde904df5e488232204"
-  name = "github.com/twitchtv/twirp"
-  packages = [
-    ".",
-    "ctxsetters",
-    "internal/contextkeys",
-  ]
-  pruneopts = "UT"
-  revision = "701935a9a4c5f89a28cab40d7741d9a0fbdb74a3"
-  version = "v5.7.0"
-
-[[projects]]
   branch = "master"
   digest = "1:d31a812696686f0059241fa6c3b56d89ada56dddde4db1d5036de5c1084000c5"
   name = "golang.org/x/net"
@@ -100,11 +86,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:730ba27cd66db3b98ec8f51a6f20d45ec277d490cca36b1f54e31d3fcaf4840e"
+  digest = "1:5b3f90037a9027c43bdcae488c39d41aadecb9d85e645bb62b773a0a6f6e86b8"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = "UT"
-  revision = "04f50cda93cbb67f2afa353c52f342100e80e625"
+  revision = "6ec70d6a5542cba804c6d16ebe8392601a0b7b60"
 
 [[projects]]
   digest = "1:8d8faad6b12a3a4c819a3f9618cb6ee1fa1cfc33253abeeea8b55336721e3405"
@@ -189,7 +175,6 @@
     "github.com/hyperledger/fabric-amcl/amcl/FP256BN",
     "github.com/hyperledger/fabric/idemix",
     "github.com/sirupsen/logrus",
-    "github.com/twitchtv/twirp",
     "google.golang.org/grpc",
   ]
   solver-name = "gps-cdcl"

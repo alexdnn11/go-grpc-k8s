@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"github.com/alexdnn11/go-grpc-k8s/pb"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"net/http"
 	"os"
 )
@@ -46,19 +49,41 @@ type AttributeData struct {
 	AttributeDisclosure int    `json:"attributeDisclosure"`
 }
 
+const (
+	certFile = "certs/server.crt"
+	keyFile  = ""
+)
+
 func main() {
 	var PORT_GRPC, PORT_API, GCD_SERVICE_NAME string
+
 	if PORT_GRPC = os.Getenv("PORT_GRPC"); PORT_GRPC == "" {
 		PORT_GRPC = "3000"
 	}
+	log.Info(fmt.Sprintf("Service port: %s", PORT_GRPC))
+
 	if PORT_API = os.Getenv("PORT_API"); PORT_API == "" {
 		PORT_GRPC = "8080"
 	}
+	log.Info(fmt.Sprintf("Client port: %s", PORT_API))
+
 	if GCD_SERVICE_NAME = os.Getenv("GCD_SERVICE_NAME"); GCD_SERVICE_NAME == "" {
 		GCD_SERVICE_NAME = "localhost"
 	}
+	log.Info(fmt.Sprintf("Service name: %s", GCD_SERVICE_NAME))
 
-	client := pb.NewServiceProtobufClient("http://"+GCD_SERVICE_NAME+":"+PORT_GRPC, &http.Client{})
+	creds, err := credentials.NewClientTLSFromFile(certFile, keyFile)
+	if err != nil {
+		log.Fatal("Failed to load certs: %v", err)
+	}
+
+	conn, err := grpc.Dial(GCD_SERVICE_NAME+":"+PORT_GRPC, grpc.WithTransportCredentials(creds))
+	if err != nil {
+		log.Fatal("Dial failed: %v", err)
+	}
+	defer conn.Close()
+
+	serviceClient := pb.NewServiceClient(conn)
 
 	r := gin.Default()
 	r.POST("/generate", func(ctx *gin.Context) {
@@ -77,7 +102,7 @@ func main() {
 
 		// Call GCD service
 		req := &pb.GenerateRequest{Attributes: attributesBytes}
-		if res, err := client.Generate(ctx, req); err == nil {
+		if res, err := serviceClient.Generate(ctx, req); err == nil {
 			var proof Proof
 			err := json.Unmarshal(res.Result, &proof)
 			if err != nil {
@@ -108,7 +133,7 @@ func main() {
 		}
 		// Call GCD service
 		req := &pb.VerifyRequest{Proof: proofBytes}
-		if res, err := client.Verify(ctx, req); err == nil {
+		if res, err := serviceClient.Verify(ctx, req); err == nil {
 			ctx.JSON(http.StatusOK, gin.H{
 				"result": res.Result,
 			})

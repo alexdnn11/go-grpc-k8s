@@ -13,8 +13,10 @@ import (
 	"github.com/hyperledger/fabric-amcl/amcl/FP256BN"
 	"github.com/hyperledger/fabric/idemix"
 	log "github.com/sirupsen/logrus"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"math/rand"
-	"net/http"
+	"net"
 	"os"
 )
 
@@ -56,6 +58,11 @@ type AttributeData struct {
 	AttributeValue      string `json:"attributeValue"`
 	AttributeDisclosure int    `json:"attributeDisclosure"`
 }
+
+const (
+	certFile = "certs/server.crt"
+	keyFile  = "certs/server.key"
+)
 
 func (s *server) Generate(ctx context.Context, r *pb.GenerateRequest) (*pb.GenerateResponse, error) {
 
@@ -255,19 +262,28 @@ func decode(pemEncodedPub string) *ecdsa.PublicKey {
 	return publicKey
 }
 
-func NewServer() *server {
-	return &server{}
-}
-
 func main() {
 
 	var PORT_GRPC string
 	if PORT_GRPC = os.Getenv("PORT_GRPC"); PORT_GRPC == "" {
 		PORT_GRPC = "3000"
 	}
-	log.Info(fmt.Sprintf("Use port: %s", PORT_GRPC))
+	log.Info(fmt.Sprintf("Service port: %s", PORT_GRPC))
 
-	server := NewServer()
-	twirpHandler := pb.NewServiceServer(server, nil)
-	log.Fatal(http.ListenAndServe(":"+PORT_GRPC, twirpHandler))
+	creds, err := credentials.NewServerTLSFromFile(certFile, keyFile)
+	if err != nil {
+		log.Fatal("Failed to load certs: %v", err)
+	}
+
+	s := grpc.NewServer(grpc.Creds(creds))
+
+	lis, err := net.Listen("tcp", ":"+PORT_GRPC)
+	if err != nil {
+		log.Fatal("Failed to listen: %v", err)
+	}
+
+	pb.RegisterServiceServer(s, &server{})
+	if err := s.Serve(lis); err != nil {
+		log.Fatal("Failed to serve: %v", err)
+	}
 }
