@@ -1,17 +1,18 @@
-# go-grpc-k8s
+### go-grpc-k8s
 
-1. Install [protobuf compiler](https://github.com/google/protobuf/blob/master/README.md#protocol-compiler-installation)
+* Install [protobuf compiler](https://github.com/google/protobuf/blob/master/README.md#protocol-compiler-installation)
 
-2. Install the protoc Go plugin
+* Install the protoc GO and Twirp plugin
 
    ```
    $ go get -u github.com/golang/protobuf/protoc-gen-go
+   $ go get -u github.com/twitchtv/twirp/protoc-gen-twirp
 
-3. make generate
+* make generate
 
-4. make up
+* make up
 
-5. sudo kubectl create -f api.yaml
-6. sudo kubectl create -f gcd.yaml
-7. sudo minikube service api-service --url
-8. Postman collections: https://www.getpostman.com/collections/a69e637db692ce39cbd2
+* sudo kubectl create -f api.yaml
+* sudo kubectl create -f gcd.yaml
+* sudo minikube service api-service --url
+* Postman collections: https://www.getpostman.com/collections/a69e637db692ce39cbd2
