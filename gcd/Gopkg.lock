@@ -3,14 +3,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:755255526f281d2959ce5463d0442972cc83c372cc1a6ad4cc483a506490b33b"
+  digest = "1:b7510a1ff6f17f8ad0bbca8debcb5448ad2f6d34c43d407a603f453c2fbdc91b"
   name = "github.com/alexdnn11/go-grpc-k8s"
   packages = ["pb"]
   pruneopts = "UT"
-  revision = "fe3e16e81c544aa8f0d0a4bf0fdc27ea4d1b48d5"
+  revision = "61ed97a63a961539e0cf438becb87a3ec4731709"
 
 [[projects]]
-  digest = "1:239c4c7fd2159585454003d9be7207167970194216193a8a210b8d29576f19c9"
+  digest = "1:f5ce1529abc1204444ec73779f44f94e2fa8fcdb7aca3c355b0c95947e4005c6"
   name = "github.com/golang/protobuf"
   packages = [
     "proto",
@@ -20,8 +20,8 @@
     "ptypes/timestamp",
   ]
   pruneopts = "UT"
-  revision = "b5d812f8a3706043e23a9cd5babf2e5423744d30"
-  version = "v1.3.1"
+  revision = "6c65a5562fc06764971b7c5d05c76c75e84bdbf7"
+  version = "v1.3.2"
 
 [[projects]]
   digest = "1:b225a01e9cc694388c61a1e7f17531a11d3a424adc7ddcb2fac06bcf36262d36"
@@ -46,12 +46,28 @@
   revision = "5ccba6eab8d6b39aa2cdd88db202bba0e25da5d7"
 
 [[projects]]
+  digest = "1:31e761d97c76151dde79e9d28964a812c46efc5baee4085b86f68f0c654450de"
+  name = "github.com/konsorten/go-windows-terminal-sequences"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "f55edac94c9bbba5d6182a4be46d86a2c9b5b50e"
+  version = "v1.0.2"
+
+[[projects]]
   digest = "1:cf31692c14422fa27c83a05292eb5cbe0fb2775972e8f1f8446a71549bd8980b"
   name = "github.com/pkg/errors"
   packages = ["."]
   pruneopts = "UT"
   revision = "ba968bfe8b2f7e042a574c888954fccecfa385b4"
   version = "v0.8.1"
+
+[[projects]]
+  digest = "1:04457f9f6f3ffc5fea48e71d62f2ca256637dee0a04d710288e27e05c8b41976"
+  name = "github.com/sirupsen/logrus"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "839c75faf7f98a33d445d181f3018b5c3409a45e"
+  version = "v1.4.2"
 
 [[projects]]
   branch = "master"
@@ -107,7 +123,7 @@
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
   pruneopts = "UT"
-  revision = "710ae3a149df3775bfc2e9efb7f4fb97b186b233"
+  revision = "3bdd9d9f5532d75d09efb230bd767d265245cfe5"
 
 [[projects]]
   digest = "1:cf01ae0753310464677058b125fa31e74fd943781782ada503180ad784fc83d3"
@@ -158,6 +174,7 @@
     "github.com/alexdnn11/go-grpc-k8s/pb",
     "github.com/hyperledger/fabric-amcl/amcl/FP256BN",
     "github.com/hyperledger/fabric/idemix",
+    "github.com/sirupsen/logrus",
     "google.golang.org/grpc",
   ]
   solver-name = "gps-cdcl"

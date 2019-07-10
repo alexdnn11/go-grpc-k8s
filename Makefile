@@ -1,4 +1,4 @@
-.PHONY: up down generate clean
+.PHONY: up down generate clean gen-pb
 
 help:
 	@echo "gRPC & k8s Demo"
@@ -13,6 +13,9 @@ help:
 generate:
 	./scripts/gen-pb.sh
 	./scripts/build-containers.sh
+
+gen-pb:
+	./scripts/gen-pb.sh
 
 up:
 	./network.sh -m up
