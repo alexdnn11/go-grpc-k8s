@@ -15,3 +15,4 @@
 * sudo kubectl create -f gcd.yaml
 * sudo minikube service api-service --url
 * Postman collections: https://www.getpostman.com/collections/a69e637db692ce39cbd2
+
