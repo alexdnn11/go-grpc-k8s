@@ -28,48 +28,48 @@ import io "io"
 import json "encoding/json"
 import url "net/url"
 
-// ====================
-// GCDService Interface
-// ====================
+// =================
+// Service Interface
+// =================
 
-type GCDService interface {
+type Service interface {
 	Generate(context.Context, *GenerateRequest) (*GenerateResponse, error)
 
 	Verify(context.Context, *VerifyRequest) (*VerifyResponse, error)
 }
 
-// ==========================
-// GCDService Protobuf Client
-// ==========================
+// =======================
+// Service Protobuf Client
+// =======================
 
-type gCDServiceProtobufClient struct {
+type serviceProtobufClient struct {
 	client HTTPClient
 	urls   [2]string
 }
 
-// NewGCDServiceProtobufClient creates a Protobuf client that implements the GCDService interface.
+// NewServiceProtobufClient creates a Protobuf client that implements the Service interface.
 // It communicates using Protobuf and can be configured with a custom HTTPClient.
-func NewGCDServiceProtobufClient(addr string, client HTTPClient) GCDService {
-	prefix := urlBase(addr) + GCDServicePathPrefix
+func NewServiceProtobufClient(addr string, client HTTPClient) Service {
+	prefix := urlBase(addr) + ServicePathPrefix
 	urls := [2]string{
 		prefix + "Generate",
 		prefix + "Verify",
 	}
 	if httpClient, ok := client.(*http.Client); ok {
-		return &gCDServiceProtobufClient{
+		return &serviceProtobufClient{
 			client: withoutRedirects(httpClient),
 			urls:   urls,
 		}
 	}
-	return &gCDServiceProtobufClient{
+	return &serviceProtobufClient{
 		client: client,
 		urls:   urls,
 	}
 }
 
-func (c *gCDServiceProtobufClient) Generate(ctx context.Context, in *GenerateRequest) (*GenerateResponse, error) {
+func (c *serviceProtobufClient) Generate(ctx context.Context, in *GenerateRequest) (*GenerateResponse, error) {
 	ctx = ctxsetters.WithPackageName(ctx, "pb")
-	ctx = ctxsetters.WithServiceName(ctx, "GCDService")
+	ctx = ctxsetters.WithServiceName(ctx, "Service")
 	ctx = ctxsetters.WithMethodName(ctx, "Generate")
 	out := new(GenerateResponse)
 	err := doProtobufRequest(ctx, c.client, c.urls[0], in, out)
@@ -79,9 +79,9 @@ func (c *gCDServiceProtobufClient) Generate(ctx context.Context, in *GenerateReq
 	return out, nil
 }
 
-func (c *gCDServiceProtobufClient) Verify(ctx context.Context, in *VerifyRequest) (*VerifyResponse, error) {
+func (c *serviceProtobufClient) Verify(ctx context.Context, in *VerifyRequest) (*VerifyResponse, error) {
 	ctx = ctxsetters.WithPackageName(ctx, "pb")
-	ctx = ctxsetters.WithServiceName(ctx, "GCDService")
+	ctx = ctxsetters.WithServiceName(ctx, "Service")
 	ctx = ctxsetters.WithMethodName(ctx, "Verify")
 	out := new(VerifyResponse)
 	err := doProtobufRequest(ctx, c.client, c.urls[1], in, out)
@@ -91,38 +91,38 @@ func (c *gCDServiceProtobufClient) Verify(ctx context.Context, in *VerifyRequest
 	return out, nil
 }
 
-// ======================
-// GCDService JSON Client
-// ======================
+// ===================
+// Service JSON Client
+// ===================
 
-type gCDServiceJSONClient struct {
+type serviceJSONClient struct {
 	client HTTPClient
 	urls   [2]string
 }
 
-// NewGCDServiceJSONClient creates a JSON client that implements the GCDService interface.
+// NewServiceJSONClient creates a JSON client that implements the Service interface.
 // It communicates using JSON and can be configured with a custom HTTPClient.
-func NewGCDServiceJSONClient(addr string, client HTTPClient) GCDService {
-	prefix := urlBase(addr) + GCDServicePathPrefix
+func NewServiceJSONClient(addr string, client HTTPClient) Service {
+	prefix := urlBase(addr) + ServicePathPrefix
 	urls := [2]string{
 		prefix + "Generate",
 		prefix + "Verify",
 	}
 	if httpClient, ok := client.(*http.Client); ok {
-		return &gCDServiceJSONClient{
+		return &serviceJSONClient{
 			client: withoutRedirects(httpClient),
 			urls:   urls,
 		}
 	}
-	return &gCDServiceJSONClient{
+	return &serviceJSONClient{
 		client: client,
 		urls:   urls,
 	}
 }
 
-func (c *gCDServiceJSONClient) Generate(ctx context.Context, in *GenerateRequest) (*GenerateResponse, error) {
+func (c *serviceJSONClient) Generate(ctx context.Context, in *GenerateRequest) (*GenerateResponse, error) {
 	ctx = ctxsetters.WithPackageName(ctx, "pb")
-	ctx = ctxsetters.WithServiceName(ctx, "GCDService")
+	ctx = ctxsetters.WithServiceName(ctx, "Service")
 	ctx = ctxsetters.WithMethodName(ctx, "Generate")
 	out := new(GenerateResponse)
 	err := doJSONRequest(ctx, c.client, c.urls[0], in, out)
@@ -132,9 +132,9 @@ func (c *gCDServiceJSONClient) Generate(ctx context.Context, in *GenerateRequest
 	return out, nil
 }
 
-func (c *gCDServiceJSONClient) Verify(ctx context.Context, in *VerifyRequest) (*VerifyResponse, error) {
+func (c *serviceJSONClient) Verify(ctx context.Context, in *VerifyRequest) (*VerifyResponse, error) {
 	ctx = ctxsetters.WithPackageName(ctx, "pb")
-	ctx = ctxsetters.WithServiceName(ctx, "GCDService")
+	ctx = ctxsetters.WithServiceName(ctx, "Service")
 	ctx = ctxsetters.WithMethodName(ctx, "Verify")
 	out := new(VerifyResponse)
 	err := doJSONRequest(ctx, c.client, c.urls[1], in, out)
@@ -144,37 +144,37 @@ func (c *gCDServiceJSONClient) Verify(ctx context.Context, in *VerifyRequest) (*
 	return out, nil
 }
 
-// =========================
-// GCDService Server Handler
-// =========================
+// ======================
+// Service Server Handler
+// ======================
 
-type gCDServiceServer struct {
-	GCDService
+type serviceServer struct {
+	Service
 	hooks *twirp.ServerHooks
 }
 
-func NewGCDServiceServer(svc GCDService, hooks *twirp.ServerHooks) TwirpServer {
-	return &gCDServiceServer{
-		GCDService: svc,
-		hooks:      hooks,
+func NewServiceServer(svc Service, hooks *twirp.ServerHooks) TwirpServer {
+	return &serviceServer{
+		Service: svc,
+		hooks:   hooks,
 	}
 }
 
 // writeError writes an HTTP response with a valid Twirp error format, and triggers hooks.
 // If err is not a twirp.Error, it will get wrapped with twirp.InternalErrorWith(err)
-func (s *gCDServiceServer) writeError(ctx context.Context, resp http.ResponseWriter, err error) {
+func (s *serviceServer) writeError(ctx context.Context, resp http.ResponseWriter, err error) {
 	writeError(ctx, resp, err, s.hooks)
 }
 
-// GCDServicePathPrefix is used for all URL paths on a twirp GCDService server.
-// Requests are always: POST GCDServicePathPrefix/method
+// ServicePathPrefix is used for all URL paths on a twirp Service server.
+// Requests are always: POST ServicePathPrefix/method
 // It can be used in an HTTP mux to route twirp requests along with non-twirp requests on other routes.
-const GCDServicePathPrefix = "/twirp/pb.GCDService/"
+const ServicePathPrefix = "/twirp/pb.Service/"
 
-func (s *gCDServiceServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
+func (s *serviceServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	ctx := req.Context()
 	ctx = ctxsetters.WithPackageName(ctx, "pb")
-	ctx = ctxsetters.WithServiceName(ctx, "GCDService")
+	ctx = ctxsetters.WithServiceName(ctx, "Service")
 	ctx = ctxsetters.WithResponseWriter(ctx, resp)
 
 	var err error
@@ -192,10 +192,10 @@ func (s *gCDServiceServer) ServeHTTP(resp http.ResponseWriter, req *http.Request
 	}
 
 	switch req.URL.Path {
-	case "/twirp/pb.GCDService/Generate":
+	case "/twirp/pb.Service/Generate":
 		s.serveGenerate(ctx, resp, req)
 		return
-	case "/twirp/pb.GCDService/Verify":
+	case "/twirp/pb.Service/Verify":
 		s.serveVerify(ctx, resp, req)
 		return
 	default:
@@ -206,7 +206,7 @@ func (s *gCDServiceServer) ServeHTTP(resp http.ResponseWriter, req *http.Request
 	}
 }
 
-func (s *gCDServiceServer) serveGenerate(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+func (s *serviceServer) serveGenerate(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
 	header := req.Header.Get("Content-Type")
 	i := strings.Index(header, ";")
 	if i == -1 {
@@ -224,7 +224,7 @@ func (s *gCDServiceServer) serveGenerate(ctx context.Context, resp http.Response
 	}
 }
 
-func (s *gCDServiceServer) serveGenerateJSON(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+func (s *serviceServer) serveGenerateJSON(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
 	var err error
 	ctx = ctxsetters.WithMethodName(ctx, "Generate")
 	ctx, err = callRequestRouted(ctx, s.hooks)
@@ -244,7 +244,7 @@ func (s *gCDServiceServer) serveGenerateJSON(ctx context.Context, resp http.Resp
 	var respContent *GenerateResponse
 	func() {
 		defer ensurePanicResponses(ctx, resp, s.hooks)
-		respContent, err = s.GCDService.Generate(ctx, reqContent)
+		respContent, err = s.Service.Generate(ctx, reqContent)
 	}()
 
 	if err != nil {
@@ -279,7 +279,7 @@ func (s *gCDServiceServer) serveGenerateJSON(ctx context.Context, resp http.Resp
 	callResponseSent(ctx, s.hooks)
 }
 
-func (s *gCDServiceServer) serveGenerateProtobuf(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+func (s *serviceServer) serveGenerateProtobuf(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
 	var err error
 	ctx = ctxsetters.WithMethodName(ctx, "Generate")
 	ctx, err = callRequestRouted(ctx, s.hooks)
@@ -303,7 +303,7 @@ func (s *gCDServiceServer) serveGenerateProtobuf(ctx context.Context, resp http.
 	var respContent *GenerateResponse
 	func() {
 		defer ensurePanicResponses(ctx, resp, s.hooks)
-		respContent, err = s.GCDService.Generate(ctx, reqContent)
+		respContent, err = s.Service.Generate(ctx, reqContent)
 	}()
 
 	if err != nil {
@@ -335,7 +335,7 @@ func (s *gCDServiceServer) serveGenerateProtobuf(ctx context.Context, resp http.
 	callResponseSent(ctx, s.hooks)
 }
 
-func (s *gCDServiceServer) serveVerify(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+func (s *serviceServer) serveVerify(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
 	header := req.Header.Get("Content-Type")
 	i := strings.Index(header, ";")
 	if i == -1 {
@@ -353,7 +353,7 @@ func (s *gCDServiceServer) serveVerify(ctx context.Context, resp http.ResponseWr
 	}
 }
 
-func (s *gCDServiceServer) serveVerifyJSON(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+func (s *serviceServer) serveVerifyJSON(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
 	var err error
 	ctx = ctxsetters.WithMethodName(ctx, "Verify")
 	ctx, err = callRequestRouted(ctx, s.hooks)
@@ -373,7 +373,7 @@ func (s *gCDServiceServer) serveVerifyJSON(ctx context.Context, resp http.Respon
 	var respContent *VerifyResponse
 	func() {
 		defer ensurePanicResponses(ctx, resp, s.hooks)
-		respContent, err = s.GCDService.Verify(ctx, reqContent)
+		respContent, err = s.Service.Verify(ctx, reqContent)
 	}()
 
 	if err != nil {
@@ -408,7 +408,7 @@ func (s *gCDServiceServer) serveVerifyJSON(ctx context.Context, resp http.Respon
 	callResponseSent(ctx, s.hooks)
 }
 
-func (s *gCDServiceServer) serveVerifyProtobuf(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
+func (s *serviceServer) serveVerifyProtobuf(ctx context.Context, resp http.ResponseWriter, req *http.Request) {
 	var err error
 	ctx = ctxsetters.WithMethodName(ctx, "Verify")
 	ctx, err = callRequestRouted(ctx, s.hooks)
@@ -432,7 +432,7 @@ func (s *gCDServiceServer) serveVerifyProtobuf(ctx context.Context, resp http.Re
 	var respContent *VerifyResponse
 	func() {
 		defer ensurePanicResponses(ctx, resp, s.hooks)
-		respContent, err = s.GCDService.Verify(ctx, reqContent)
+		respContent, err = s.Service.Verify(ctx, reqContent)
 	}()
 
 	if err != nil {
@@ -464,16 +464,16 @@ func (s *gCDServiceServer) serveVerifyProtobuf(ctx context.Context, resp http.Re
 	callResponseSent(ctx, s.hooks)
 }
 
-func (s *gCDServiceServer) ServiceDescriptor() ([]byte, int) {
+func (s *serviceServer) ServiceDescriptor() ([]byte, int) {
 	return twirpFileDescriptor0, 0
 }
 
-func (s *gCDServiceServer) ProtocGenTwirpVersion() string {
+func (s *serviceServer) ProtocGenTwirpVersion() string {
 	return "v5.7.0"
 }
 
-func (s *gCDServiceServer) PathPrefix() string {
-	return GCDServicePathPrefix
+func (s *serviceServer) PathPrefix() string {
+	return ServicePathPrefix
 }
 
 // =====
@@ -948,7 +948,7 @@ func callError(ctx context.Context, h *twirp.ServerHooks, err twirp.Error) conte
 }
 
 var twirpFileDescriptor0 = []byte{
-	// 206 bytes of a gzipped FileDescriptorProto
+	// 203 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x29, 0x48, 0xd2, 0x4f,
 	0x4f, 0x4e, 0xd1, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x2a, 0x48, 0x52, 0x32, 0xe4, 0xe2,
 	0x77, 0x4f, 0xcd, 0x4b, 0x2d, 0x4a, 0x2c, 0x49, 0x0d, 0x4a, 0x2d, 0x2c, 0x4d, 0x2d, 0x2e, 0x11,
@@ -957,9 +957,9 @@ var twirpFileDescriptor0 = []byte{
 	0x2b, 0x4e, 0x15, 0x12, 0xe3, 0x62, 0x2b, 0x4a, 0x2d, 0x2e, 0xcd, 0x29, 0x81, 0xaa, 0x87, 0xf2,
 	0x94, 0x54, 0xb9, 0x78, 0xc3, 0x52, 0x8b, 0x32, 0xd3, 0x2a, 0x61, 0x86, 0x8b, 0x70, 0xb1, 0x16,
 	0x14, 0xe5, 0xe7, 0xa7, 0x41, 0xd5, 0x41, 0x38, 0x4a, 0x1a, 0x5c, 0x7c, 0x30, 0x65, 0x58, 0x0d,
-	0xe4, 0x80, 0x19, 0x68, 0x54, 0xc1, 0xc5, 0xe5, 0xee, 0xec, 0x12, 0x9c, 0x5a, 0x54, 0x96, 0x99,
-	0x9c, 0x2a, 0x64, 0xce, 0xc5, 0x01, 0x73, 0x8a, 0x90, 0xb0, 0x5e, 0x41, 0x92, 0x1e, 0x9a, 0x5f,
-	0xa4, 0x44, 0x50, 0x05, 0x21, 0x86, 0x2b, 0x31, 0x08, 0x19, 0x72, 0xb1, 0x41, 0x2c, 0x14, 0x12,
-	0x04, 0xa9, 0x40, 0x71, 0xa3, 0x94, 0x10, 0xb2, 0x10, 0x4c, 0x4b, 0x12, 0x1b, 0x38, 0xd0, 0x8c,
-	0x01, 0x01, 0x00, 0x00, 0xff, 0xff, 0x6d, 0x4c, 0xee, 0xc7, 0x44, 0x01, 0x00, 0x00,
+	0xe4, 0x80, 0x19, 0x68, 0x54, 0xca, 0xc5, 0x1e, 0x9c, 0x5a, 0x54, 0x96, 0x99, 0x9c, 0x2a, 0x64,
+	0xce, 0xc5, 0x01, 0x73, 0x87, 0x90, 0xb0, 0x5e, 0x41, 0x92, 0x1e, 0x9a, 0x47, 0xa4, 0x44, 0x50,
+	0x05, 0x21, 0x26, 0x2b, 0x31, 0x08, 0x19, 0x72, 0xb1, 0x41, 0x6c, 0x13, 0x12, 0x04, 0xa9, 0x40,
+	0x71, 0xa0, 0x94, 0x10, 0xb2, 0x10, 0x4c, 0x4b, 0x12, 0x1b, 0x38, 0xc4, 0x8c, 0x01, 0x01, 0x00,
+	0x00, 0xff, 0xff, 0xeb, 0x74, 0x91, 0x2b, 0x41, 0x01, 0x00, 0x00,
 }
