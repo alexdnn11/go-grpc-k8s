@@ -13,10 +13,8 @@ import (
 	"github.com/hyperledger/fabric-amcl/amcl/FP256BN"
 	"github.com/hyperledger/fabric/idemix"
 	log "github.com/sirupsen/logrus"
-	"github.com/twitchtv/twirp"
-	"google.golang.org/grpc"
 	"math/rand"
-	"net"
+	"net/http"
 	"os"
 )
 
@@ -257,6 +255,10 @@ func decode(pemEncodedPub string) *ecdsa.PublicKey {
 	return publicKey
 }
 
+func NewServer() *server {
+	return &server{}
+}
+
 func main() {
 
 	var PORT_GRPC string
@@ -265,12 +267,7 @@ func main() {
 	}
 	log.Info(fmt.Sprintf("Use port: %s", PORT_GRPC))
 
-	lis, err := net.Listen("tcp", ":"+PORT_GRPC)
-	if err != nil {
-		log.Fatal("Failed to listen: %v", err)
-	}
-	s := pb.NewServiceServer(server, nil)
-	if err := s.Serve(lis); err != nil {
-		log.Fatal("Failed to serve: %v", err)
-	}
+	server := NewServer()
+	twirpHandler := pb.NewServiceServer(server, nil)
+	log.Fatal(http.ListenAndServe(":"+PORT_GRPC, twirpHandler))
 }

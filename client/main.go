@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"github.com/alexdnn11/go-grpc-k8s/pb"
 	"github.com/gin-gonic/gin"
-	log "github.com/sirupsen/logrus"
-	"google.golang.org/grpc"
 	"net/http"
 	"os"
 )
@@ -60,12 +58,7 @@ func main() {
 		GCD_SERVICE_NAME = "localhost"
 	}
 
-	conn, err := grpc.Dial(GCD_SERVICE_NAME+":"+PORT_GRPC, grpc.WithInsecure())
-	if err != nil {
-		log.Fatalf("Dial failed: %v", err)
-	}
-	defer conn.Close()
-	gcdClient := pb.NewGCDServiceClient(conn)
+	client := pb.NewServiceProtobufClient(GCD_SERVICE_NAME+":"+PORT_GRPC, &http.Client{})
 
 	r := gin.Default()
 	r.POST("/generate", func(ctx *gin.Context) {
@@ -84,7 +77,7 @@ func main() {
 
 		// Call GCD service
 		req := &pb.GenerateRequest{Attributes: attributesBytes}
-		if res, err := gcdClient.Generate(ctx, req); err == nil {
+		if res, err := client.Generate(ctx, req); err == nil {
 			var proof Proof
 			err := json.Unmarshal(res.Result, &proof)
 			if err != nil {
@@ -115,7 +108,7 @@ func main() {
 		}
 		// Call GCD service
 		req := &pb.VerifyRequest{Proof: proofBytes}
-		if res, err := gcdClient.Verify(ctx, req); err == nil {
+		if res, err := client.Verify(ctx, req); err == nil {
 			ctx.JSON(http.StatusOK, gin.H{
 				"result": res.Result,
 			})

@@ -3,11 +3,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:e53117699567439ae9a8304c6aefc791f029c86bfa5945c9881a77719b01d168"
+  digest = "1:43e29e60d4eb18c5c0a9480b87546c703f11e8fbf16ba2e2baacfd1dcf01f4eb"
   name = "github.com/alexdnn11/go-grpc-k8s"
   packages = ["pb"]
   pruneopts = "UT"
-  revision = "6b73a7a3c4a8b34171a67d18ddb1d82582273110"
+  revision = "626557ed5becaf4e507b0a617eac2c2960f4e42d"
 
 [[projects]]
   digest = "1:3ee1d175a75b911a659fbd860060874c4f503e793c5870d13e5a0ede529a63cf"
