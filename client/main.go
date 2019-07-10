@@ -58,7 +58,7 @@ func main() {
 		GCD_SERVICE_NAME = "localhost"
 	}
 
-	client := pb.NewServiceProtobufClient(GCD_SERVICE_NAME+":"+PORT_GRPC, &http.Client{})
+	client := pb.NewServiceProtobufClient("http://"+GCD_SERVICE_NAME+":"+PORT_GRPC, &http.Client{})
 
 	r := gin.Default()
 	r.POST("/generate", func(ctx *gin.Context) {
