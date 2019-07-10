@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/alexdnn11/go-grpc-k8s/pb"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
-	"log"
 	"net/http"
 	"os"
 )

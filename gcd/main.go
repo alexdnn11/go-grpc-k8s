@@ -12,8 +12,8 @@ import (
 	"github.com/alexdnn11/go-grpc-k8s/pb"
 	"github.com/hyperledger/fabric-amcl/amcl/FP256BN"
 	"github.com/hyperledger/fabric/idemix"
+	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
-	"log"
 	"math/rand"
 	"net"
 	"os"
@@ -262,15 +262,15 @@ func main() {
 	if PORT_GRPC = os.Getenv("PORT_GRPC"); PORT_GRPC == "" {
 		PORT_GRPC = "3000"
 	}
-	fmt.Println(PORT_GRPC)
+	log.Info(fmt.Sprintf("Use port: %s", PORT_GRPC))
 
 	lis, err := net.Listen("tcp", ":"+PORT_GRPC)
 	if err != nil {
-		log.Fatalf("Failed to listen: %v", err)
+		log.Fatal("Failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
 	pb.RegisterGCDServiceServer(s, &server{})
 	if err := s.Serve(lis); err != nil {
-		log.Fatalf("Failed to serve: %v", err)
+		log.Fatal("Failed to serve: %v", err)
 	}
 }
