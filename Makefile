@@ -1,4 +1,4 @@
-.PHONY: up down generate clean gen-pb gen-crypto
+.PHONY: up down generate clean gen-pb gen-certs
 
 help:
 	@echo "gRPC & k8s Demo"
@@ -17,8 +17,8 @@ generate:
 gen-pb:
 	./scripts/gen-pb.sh
 
-gen-crypto:
-	./scripts/gen-crypto.sh
+gen-certs:
+	./scripts/gen-certs.sh
 
 up:
 	./network.sh -m up

@@ -1,6 +1,6 @@
 version: '2'
 services:
-  gcd:
+  gcd.example.com:
     container_name: gcd.example.com
     build: .
     command: go run main.go
@@ -11,22 +11,22 @@ services:
     environment:
       PORT_GRPC: 3000
     volumes:
-      - ./certs/server:/go/src/github.com/alexdnn11/go-grpc-k8s/server/certs
+      - ./certs/rsa:/go/src/github.com/alexdnn11/go-grpc-k8s/server/certs
 
-  api:
+  api.example.com:
     container_name: api.example.com
     build: .
     command: go run main.go
     image: local/api:latest
     restart: always
     depends_on:
-      - gcd
+      - gcd.example.com
     ports:
      - "8080:8080"
     environment:
       PORT_API: 8080
       PORT_GRPC: 3000
-      GCD_SERVICE_NAME: gcd
+      GCD_SERVICE_NAME: gcd.example.com
     volumes:
-      - ./certs/client:/go/src/github.com/alexdnn11/go-grpc-k8s/client/certs
+      - ./certs/rsa:/go/src/github.com/alexdnn11/go-grpc-k8s/client/certs
 

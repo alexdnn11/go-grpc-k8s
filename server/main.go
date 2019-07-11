@@ -270,17 +270,17 @@ func main() {
 	}
 	log.Info(fmt.Sprintf("Service port: %s", PORT_GRPC))
 
+	lis, err := net.Listen("tcp", ":"+PORT_GRPC)
+	if err != nil {
+		log.Fatal("Failed to listen: %v", err)
+	}
+
 	creds, err := credentials.NewServerTLSFromFile(certFile, keyFile)
 	if err != nil {
 		log.Fatal("Failed to load certs: %v", err)
 	}
 
 	s := grpc.NewServer(grpc.Creds(creds))
-
-	lis, err := net.Listen("tcp", ":"+PORT_GRPC)
-	if err != nil {
-		log.Fatal("Failed to listen: %v", err)
-	}
 
 	pb.RegisterServiceServer(s, &server{})
 	if err := s.Serve(lis); err != nil {

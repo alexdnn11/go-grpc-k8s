@@ -1,5 +1,4 @@
 .idea
-*/*.crt
-*/*.key
 *.crt
 *.key
+*.csr
