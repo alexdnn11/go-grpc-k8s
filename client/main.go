@@ -51,7 +51,6 @@ type AttributeData struct {
 
 const (
 	certFile = "certs/server.crt"
-	keyFile  = ""
 )
 
 func main() {
@@ -72,7 +71,7 @@ func main() {
 	}
 	log.Info(fmt.Sprintf("Service name: %s", GCD_SERVICE_NAME))
 
-	creds, err := credentials.NewClientTLSFromFile(certFile, keyFile)
+	creds, err := credentials.NewClientTLSFromFile(certFile, "")
 	if err != nil {
 		log.Fatal("Failed to load certs: %v", err)
 	}
