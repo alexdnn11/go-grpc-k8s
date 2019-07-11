@@ -2,11 +2,10 @@
 
 * Install [protobuf compiler](https://github.com/google/protobuf/blob/master/README.md#protocol-compiler-installation)
 
-* Install the protoc GO and Twirp plugin
+* Install the protoc GO plugin
 
    ```
    $ go get -u github.com/golang/protobuf/protoc-gen-go
-   $ go get -u github.com/twitchtv/twirp/protoc-gen-twirp
 
 * make generate
 
