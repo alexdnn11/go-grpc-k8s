@@ -11,7 +11,7 @@ services:
     environment:
       PORT_GRPC: 3000
     volumes:
-      - ./certs/rsa:/go/src/github.com/alexdnn11/go-grpc-k8s/server/certs
+      - ./certs/rsa/server:/go/src/github.com/alexdnn11/go-grpc-k8s/server/certs
 
   api.example.com:
     container_name: api.example.com
@@ -28,5 +28,5 @@ services:
       PORT_GRPC: 3000
       GCD_SERVICE_NAME: gcd.example.com
     volumes:
-      - ./certs/rsa:/go/src/github.com/alexdnn11/go-grpc-k8s/client/certs
+      - ./certs/rsa/client:/go/src/github.com/alexdnn11/go-grpc-k8s/client/certs
 

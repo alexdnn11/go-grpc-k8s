@@ -66,6 +66,9 @@ const (
 
 func (s *server) Generate(ctx context.Context, r *pb.GenerateRequest) (*pb.GenerateResponse, error) {
 
+	log.Info(fmt.Sprintf("### Generate started ###"))
+	log.Debug(ctx)
+
 	proof := Proof{}
 
 	// making arrays of attributes names and values
@@ -193,10 +196,15 @@ func (s *server) Generate(ctx context.Context, r *pb.GenerateRequest) (*pb.Gener
 		return &pb.GenerateResponse{Result: nil}, err
 	}
 
+	log.Info(fmt.Sprintf("### Generate successfully completed ###"))
+
 	return &pb.GenerateResponse{Result: result}, nil
 }
 
 func (s *server) Verify(ctx context.Context, r *pb.VerifyRequest) (*pb.VerifyResponse, error) {
+
+	log.Info(fmt.Sprintf("### Verify started ###"))
+	log.Debug(ctx)
 
 	proof := Proof{}
 
@@ -242,6 +250,8 @@ func (s *server) Verify(ctx context.Context, r *pb.VerifyRequest) (*pb.VerifyRes
 		fmt.Println(message)
 		return &pb.VerifyResponse{Result: false}, err
 	}
+
+	log.Info(fmt.Sprintf("### Verify successfully completed ###"))
 
 	return &pb.VerifyResponse{Result: true}, nil
 }
