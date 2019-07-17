@@ -30,3 +30,21 @@ services:
     volumes:
       - ./certs/rsa/server:/go/src/github.com/alexdnn11/go-grpc-k8s/client/certs
 
+  api-node.example.com:
+    container_name: api-node.example.com
+    build: .
+    command: node index.js
+    image: local/api-node:latest
+    restart: always
+    depends_on:
+      - gcd.example.com
+    ports:
+      - "3030:3030"
+    environment:
+      PORT_API: 3030
+      PORT_GRPC: 3000
+      GCD_SERVICE_NAME: gcd.example.com
+    volumes:
+      - ./certs/rsa/server:/app/certs
+      - ./pb:/app/pb
+

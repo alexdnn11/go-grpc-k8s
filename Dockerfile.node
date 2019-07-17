@@ -1,0 +1,12 @@
+FROM node:carbon
+
+WORKDIR /app
+
+COPY client-node/package*.json ./
+
+RUN npm install
+
+COPY client-node /app
+
+EXPOSE 8080
+CMD [ "node", "index.js" ]
