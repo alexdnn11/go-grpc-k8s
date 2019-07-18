@@ -21,6 +21,9 @@ var bodyParser = require('body-parser');
 
 var fs = require("fs");
 
+var messages = require('./gcd_pb');
+var services = require('./gcd_grpc_pb');
+
 
 const PORT_GRPC = process.env.PORT_GRPC || 3000,
     PORT_API = process.env.PORT_API || 3031,
@@ -67,14 +70,17 @@ const creds = grpc.credentials.createSsl(cacert, key, cert, options);
 
 function Generate(attributes) {
 
-    var client;
+    var client, request;
     if (TLS_ENABLE === "true") {
         client = new gcd_proto.GCDService(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, creds);
     } else {
-        client = new gcd_proto.GCDService(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, grpc.credentials.createInsecure());
+        client = new services.GCDServiceClient(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, grpc.credentials.createInsecure());
     }
 
-    client.Generate({Attributes: attributes}, function (err, response) {
+    request = new messages.GenerateRequest();
+    request.setAttributes(attributes);
+
+    client.Generate(request, function(err, response) {
         if(err){
             console.log(err);
             return err;
