@@ -67,14 +67,22 @@ const creds = grpc.credentials.createSsl(cacert, key, cert, options);
 
 function Generate(attributes) {
 
-    var client = TLS_ENABLE ? new gcd_proto.GCDService(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, creds) :
-        new gcd_proto.GCDService(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, grpc.credentials.createInsecure());
+    var client;
+    if (TLS_ENABLE === "true") {
+        client = new gcd_proto.GCDService(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, creds);
+    } else {
+        client = new gcd_proto.GCDService(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, grpc.credentials.createInsecure());
+    }
 
-    console.log(client);
-
-    client.Generate({Attributes: attributes}, function (err, response) {
-        console.log(`Greeting:, ${response}`);
-    });
+    try {
+        client.Generate({Attributes: attributes}, function (err, response) {
+            console.log(`Greeting:, ${response}`);
+            return response;
+        });
+    }catch (e) {
+        console.log(e);
+        return e;
+    }
 }
 
 app.use(bodyParser.urlencoded({

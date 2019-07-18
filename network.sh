@@ -58,7 +58,7 @@ done
 if [ "${MODE}" == "up" ]; then
 
   # Start all containers
-  TLS=true docker-compose -f ./docker-compose.yml up -d
+  TLS=false docker-compose -f ./docker-compose.yml up -d
 
 elif [ "${MODE}" == "down" ]; then
   removeDockersWithDomain
