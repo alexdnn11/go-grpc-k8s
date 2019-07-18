@@ -7,6 +7,11 @@
    ```
    $ go get -u github.com/golang/protobuf/protoc-gen-go
 
+* Install the protoc Node plugin
+
+   ```
+   $ npm install -g grpc-tools
+
 * make generate
 
 * make up
