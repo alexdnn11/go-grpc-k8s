@@ -44,6 +44,7 @@ services:
       PORT_API: 3030
       PORT_GRPC: 3000
       GCD_SERVICE_NAME: gcd.example.com
+      HOST_NAME: api-node.example.com
     volumes:
       - ./certs/rsa/server:/app/certs
       - ./pb:/app/pb

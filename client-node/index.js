@@ -24,11 +24,13 @@ var fs = require("fs");
 
 const PORT_GRPC = process.env.PORT_GRPC || 3000,
     PORT_API = process.env.PORT_API || 3030,
-    GCD_SERVICE_NAME = process.env.GCD_SERVICE_NAME || 'gcd.example.com';
+    GCD_SERVICE_NAME = process.env.GCD_SERVICE_NAME || 'gcd.example.com',
+    HOST_NAME = process.env.HOST_NAME || 'api-node.example.com';
 
 console.info(`PORT_GRPC = ${PORT_GRPC}`);
 console.info(`PORT_API = ${PORT_API}`);
 console.info(`GCD_SERVICE_NAME = ${GCD_SERVICE_NAME}`);
+console.info(`HOST_NAME = ${HOST_NAME}`);
 
 var PROTO_PATH = './pb/gcd.proto';
 var ROOT_CERTS = './certs/server.crt';
@@ -52,7 +54,12 @@ const cacert = null,
     cert = fs.readFileSync(ROOT_CERTS),
     key = fs.readFileSync(ROOT_KEY);
 
-const creds = grpc.credentials.createSsl(cacert, key, cert);
+const options = {
+    'grpc.ssl_target_name_override' : HOST_NAME,
+    'grpc.default_authority': HOST_NAME
+};
+
+const creds = grpc.credentials.createSsl(cacert, key, cert, options);
 
 function Generate(attributes) {
 
