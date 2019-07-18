@@ -50,7 +50,7 @@ type AttributeData struct {
 }
 
 const (
-	certFile = "certs/server.crt"
+	certFile = "certs/server/server.crt"
 )
 
 func main() {

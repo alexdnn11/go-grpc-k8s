@@ -11,10 +11,10 @@ services:
     environment:
       PORT_GRPC: 3000
     volumes:
-      - ./certs/rsa/server:/go/src/github.com/alexdnn11/go-grpc-k8s/server/certs
+      - ./certs:/go/src/github.com/alexdnn11/go-grpc-k8s/server/certs
 
-  api.example.com:
-    container_name: api.example.com
+  api-go.example.com:
+    container_name: api-go.example.com
     build: .
     command: go run main.go
     image: local/api:latest
@@ -28,10 +28,10 @@ services:
       PORT_GRPC: 3000
       GCD_SERVICE_NAME: gcd.example.com
     volumes:
-      - ./certs/rsa/server:/go/src/github.com/alexdnn11/go-grpc-k8s/client/certs
+      - ./certs:/go/src/github.com/alexdnn11/go-grpc-k8s/client/certs
 
-  api-node.example.com:
-    container_name: api-node.example.com
+  api.example.com:
+    container_name: api.example.com
     build: .
     command: node index.js
     image: local/api-node:latest
@@ -44,8 +44,8 @@ services:
       PORT_API: 3030
       PORT_GRPC: 3000
       GCD_SERVICE_NAME: gcd.example.com
-      HOST_NAME: api-node.example.com
+      HOST_NAME: api.example.com
     volumes:
-      - ./certs/rsa/server:/app/certs
+      - ./certs:/app/certs
       - ./pb:/app/pb
 

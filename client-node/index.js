@@ -25,7 +25,7 @@ var fs = require("fs");
 const PORT_GRPC = process.env.PORT_GRPC || 3000,
     PORT_API = process.env.PORT_API || 3030,
     GCD_SERVICE_NAME = process.env.GCD_SERVICE_NAME || 'gcd.example.com',
-    HOST_NAME = process.env.HOST_NAME || 'api-node.example.com';
+    HOST_NAME = process.env.HOST_NAME || 'api.example.com';
 
 console.info(`PORT_GRPC = ${PORT_GRPC}`);
 console.info(`PORT_API = ${PORT_API}`);
@@ -33,8 +33,9 @@ console.info(`GCD_SERVICE_NAME = ${GCD_SERVICE_NAME}`);
 console.info(`HOST_NAME = ${HOST_NAME}`);
 
 var PROTO_PATH = './pb/gcd.proto';
-var ROOT_CERTS = './certs/server.crt';
-var ROOT_KEY = './certs/server.key';
+var CA_CERTS = './certs/ca/rootCA.crt';
+var ROOT_CERTS = './certs/client/client.crt';
+var ROOT_KEY = './certs/client/client.key';
 
 var grpc = require('grpc');
 var protoLoader = require('@grpc/proto-loader');
@@ -50,7 +51,7 @@ var packageDefinition = protoLoader.loadSync(
 
 var gcd_proto = grpc.loadPackageDefinition(packageDefinition).pb;
 
-const cacert = null,
+const cacert = fs.readFileSync(CA_CERTS),
     cert = fs.readFileSync(ROOT_CERTS),
     key = fs.readFileSync(ROOT_KEY);
 

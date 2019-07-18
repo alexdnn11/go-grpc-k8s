@@ -60,8 +60,8 @@ type AttributeData struct {
 }
 
 const (
-	certFile = "certs/server.crt"
-	keyFile  = "certs/server.key"
+	certFile = "certs/server/server.crt"
+	keyFile  = "certs/server/server.key"
 )
 
 func (s *server) Generate(ctx context.Context, r *pb.GenerateRequest) (*pb.GenerateResponse, error) {
