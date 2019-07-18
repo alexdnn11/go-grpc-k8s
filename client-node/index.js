@@ -74,15 +74,14 @@ function Generate(attributes) {
         client = new gcd_proto.GCDService(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, grpc.credentials.createInsecure());
     }
 
-    try {
-        client.Generate({Attributes: attributes}, function (err, response) {
-            console.log(`Greeting:, ${response}`);
-            return response;
-        });
-    }catch (e) {
-        console.log(e);
-        return e;
-    }
+    client.Generate({Attributes: attributes}, function (err, response) {
+        if(err){
+            console.log(err);
+            return err;
+        }
+        console.log(`Greeting:, ${response}`);
+        return response;
+    });
 }
 
 app.use(bodyParser.urlencoded({
