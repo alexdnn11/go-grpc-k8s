@@ -27,9 +27,9 @@ var services = require('./gcd_grpc_pb');
 
 const PORT_GRPC = process.env.PORT_GRPC || 3000,
     PORT_API = process.env.PORT_API || 3031,
-    GCD_SERVICE_NAME = process.env.GCD_SERVICE_NAME || 'gcd.example.com',
-    HOST_NAME = process.env.HOST_NAME || 'api.example.com',
-    TLS_ENABLE = process.env.TLS_ENABLE || false;
+    GCD_SERVICE_NAME = process.env.GCD_SERVICE_NAME || 'localhost',
+    HOST_NAME = process.env.HOST_NAME || 'localhost',
+    TLS_ENABLE = process.env.TLS_ENABLE || "false";
 
 console.info(`PORT_GRPC = ${PORT_GRPC}`);
 console.info(`PORT_API = ${PORT_API}`);
@@ -37,25 +37,11 @@ console.info(`GCD_SERVICE_NAME = ${GCD_SERVICE_NAME}`);
 console.info(`HOST_NAME = ${HOST_NAME}`);
 console.info(`TLS_ENABLE = ${TLS_ENABLE}`);
 
-var PROTO_PATH = './pb/gcd.proto';
 var CA_CERTS = './certs/ca/rootCA.crt';
 var ROOT_CERTS = './certs/client/client.crt';
 var ROOT_KEY = './certs/client/client.key';
 
-
 var grpc = require('grpc');
-var protoLoader = require('@grpc/proto-loader');
-var packageDefinition = protoLoader.loadSync(
-    PROTO_PATH,
-    {
-        keepCase: true,
-        longs: String,
-        enums: String,
-        defaults: true,
-        oneofs: true
-    });
-
-var gcd_proto = grpc.loadPackageDefinition(packageDefinition).pb;
 
 const cacert = fs.readFileSync(CA_CERTS),
     cert = fs.readFileSync(ROOT_CERTS),
@@ -71,8 +57,9 @@ const creds = grpc.credentials.createSsl(cacert, key, cert, options);
 function Generate(attributes) {
 
     var client, request;
+
     if (TLS_ENABLE === "true") {
-        client = new gcd_proto.GCDService(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, creds);
+        client = new services.GCDServiceClient(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, creds);
     } else {
         client = new services.GCDServiceClient(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, grpc.credentials.createInsecure());
     }
@@ -80,7 +67,7 @@ function Generate(attributes) {
     request = new messages.GenerateRequest();
     request.setAttributes(attributes);
 
-    client.Generate(request, function(err, response) {
+    client.generate(request, function(err, response) {
         if(err){
             console.log(err);
             return err;
@@ -97,8 +84,10 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 app.post('/generate', function (req, res) {
-    let attributes = req.body.attributes ? req.body.attributes : null;
-    Generate(attributes);
+    let attr = req.body.attributes ? req.body.attributes : null;
+    let arg = new Buffer.from(attr.toString());
+    console.log(arg);
+    Generate(arg);
     res.send('Success!');
 });
 
