@@ -274,11 +274,17 @@ func decode(pemEncodedPub string) *ecdsa.PublicKey {
 
 func main() {
 
-	var PORT_GRPC string
+	var PORT_GRPC, TLS_ENABLE string
+
 	if PORT_GRPC = os.Getenv("PORT_GRPC"); PORT_GRPC == "" {
 		PORT_GRPC = "3000"
 	}
 	log.Info(fmt.Sprintf("Service port: %s", PORT_GRPC))
+
+	if TLS_ENABLE = os.Getenv("TLS_ENABLE"); TLS_ENABLE == "" {
+		TLS_ENABLE = "false"
+	}
+	log.Info(fmt.Sprintf("TLS_ENABLE: %s", TLS_ENABLE))
 
 	lis, err := net.Listen("tcp", ":"+PORT_GRPC)
 	if err != nil {
@@ -290,7 +296,13 @@ func main() {
 		log.Fatal("Failed to load certs: %v", err)
 	}
 
-	s := grpc.NewServer(grpc.Creds(creds))
+	var s *grpc.Server
+
+	if TLS_ENABLE == "true" {
+		s = grpc.NewServer(grpc.Creds(creds))
+	}else{
+		s = grpc.NewServer()
+	}
 
 	pb.RegisterServiceServer(s, &server{})
 	if err := s.Serve(lis); err != nil {

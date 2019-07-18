@@ -23,19 +23,22 @@ var fs = require("fs");
 
 
 const PORT_GRPC = process.env.PORT_GRPC || 3000,
-    PORT_API = process.env.PORT_API || 3030,
+    PORT_API = process.env.PORT_API || 3031,
     GCD_SERVICE_NAME = process.env.GCD_SERVICE_NAME || 'gcd.example.com',
-    HOST_NAME = process.env.HOST_NAME || 'api.example.com';
+    HOST_NAME = process.env.HOST_NAME || 'api.example.com',
+    TLS_ENABLE = process.env.TLS_ENABLE || false;
 
 console.info(`PORT_GRPC = ${PORT_GRPC}`);
 console.info(`PORT_API = ${PORT_API}`);
 console.info(`GCD_SERVICE_NAME = ${GCD_SERVICE_NAME}`);
 console.info(`HOST_NAME = ${HOST_NAME}`);
+console.info(`TLS_ENABLE = ${TLS_ENABLE}`);
 
 var PROTO_PATH = './pb/gcd.proto';
 var CA_CERTS = './certs/ca/rootCA.crt';
 var ROOT_CERTS = './certs/client/client.crt';
 var ROOT_KEY = './certs/client/client.key';
+
 
 var grpc = require('grpc');
 var protoLoader = require('@grpc/proto-loader');
@@ -56,7 +59,7 @@ const cacert = fs.readFileSync(CA_CERTS),
     key = fs.readFileSync(ROOT_KEY);
 
 const options = {
-    'grpc.ssl_target_name_override' : HOST_NAME,
+    'grpc.ssl_target_name_override': HOST_NAME,
     'grpc.default_authority': HOST_NAME
 };
 
@@ -64,14 +67,21 @@ const creds = grpc.credentials.createSsl(cacert, key, cert, options);
 
 function Generate(attributes) {
 
-    var client = new gcd_proto.GCDService(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, creds);
+    var client = TLS_ENABLE ? new gcd_proto.GCDService(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, creds) :
+        new gcd_proto.GCDService(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, grpc.credentials.createInsecure());
+
+    console.log(client);
 
     client.Generate({Attributes: attributes}, function (err, response) {
         console.log(`Greeting:, ${response}`);
     });
 }
 
-app.use(bodyParser());
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+
+app.use(bodyParser.json());
 
 app.post('/generate', function (req, res) {
     let attributes = req.body.attributes ? req.body.attributes : null;

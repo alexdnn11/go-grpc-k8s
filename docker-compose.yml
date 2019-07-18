@@ -10,6 +10,7 @@ services:
       - "3000:3000"
     environment:
       PORT_GRPC: 3000
+      TLS_ENABLE: $TLS
     volumes:
       - ./certs:/go/src/github.com/alexdnn11/go-grpc-k8s/server/certs
 
@@ -27,6 +28,7 @@ services:
       PORT_API: 8080
       PORT_GRPC: 3000
       GCD_SERVICE_NAME: gcd.example.com
+      TLS_ENABLE: $TLS
     volumes:
       - ./certs:/go/src/github.com/alexdnn11/go-grpc-k8s/client/certs
 
@@ -45,6 +47,7 @@ services:
       PORT_GRPC: 3000
       GCD_SERVICE_NAME: gcd.example.com
       HOST_NAME: api.example.com
+      TLS_ENABLE: $TLS
     volumes:
       - ./certs:/app/certs
       - ./pb:/app/pb

@@ -54,7 +54,7 @@ const (
 )
 
 func main() {
-	var PORT_GRPC, PORT_API, GCD_SERVICE_NAME string
+	var PORT_GRPC, PORT_API, GCD_SERVICE_NAME, TLS_ENABLE string
 
 	if PORT_GRPC = os.Getenv("PORT_GRPC"); PORT_GRPC == "" {
 		PORT_GRPC = "3000"
@@ -71,15 +71,28 @@ func main() {
 	}
 	log.Info(fmt.Sprintf("Service name: %s", GCD_SERVICE_NAME))
 
+	if TLS_ENABLE = os.Getenv("TLS_ENABLE"); TLS_ENABLE == "" {
+		TLS_ENABLE = "false"
+	}
+	log.Info(fmt.Sprintf("TLS_ENABLE: %s", TLS_ENABLE))
+
 	creds, err := credentials.NewClientTLSFromFile(certFile, "")
 	if err != nil {
 		log.Fatal("Failed to load certs: %v", err)
 	}
 
-	conn, err := grpc.Dial(GCD_SERVICE_NAME+":"+PORT_GRPC, grpc.WithTransportCredentials(creds))
+	var conn *grpc.ClientConn
+
+	if TLS_ENABLE == "true" {
+		conn, err = grpc.Dial(GCD_SERVICE_NAME+":"+PORT_GRPC, grpc.WithTransportCredentials(creds))
+	} else {
+		conn, err = grpc.Dial(GCD_SERVICE_NAME+":"+PORT_GRPC, grpc.WithInsecure())
+	}
+
 	if err != nil {
 		log.Fatal("Dial failed: %v", err)
 	}
+
 	defer conn.Close()
 
 	serviceClient := pb.NewServiceClient(conn)
