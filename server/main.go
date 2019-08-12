@@ -304,7 +304,7 @@ func main() {
 		s = grpc.NewServer()
 	}
 
-	pb.RegisterServiceServer(s, &server{})
+	pb.RegisterGCDServer(s, &server{})
 	if err := s.Serve(lis); err != nil {
 		log.Fatal("Failed to serve: %v", err)
 	}

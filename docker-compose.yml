@@ -48,7 +48,11 @@ services:
       GCD_SERVICE_NAME: gcd.example.com
       HOST_NAME: api.example.com
       TLS_ENABLE: $TLS
+      DEBUG_MODE: $DEBUG_MODE
     volumes:
       - ./certs:/app/certs
       - ./pb:/app/pb
+
+
+
 

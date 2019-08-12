@@ -190,7 +190,7 @@ func init() {
 func init() { proto.RegisterFile("gcd.proto", fileDescriptor_178e0e204cde370a) }
 
 var fileDescriptor_178e0e204cde370a = []byte{
-	// 200 bytes of a gzipped FileDescriptorProto
+	// 196 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x4c, 0x4f, 0x4e, 0xd1,
 	0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x2a, 0x48, 0x52, 0x32, 0xe4, 0xe2, 0x77, 0x4f, 0xcd,
 	0x4b, 0x2d, 0x4a, 0x2c, 0x49, 0x0d, 0x4a, 0x2d, 0x2c, 0x4d, 0x2d, 0x2e, 0x11, 0x92, 0xe3, 0xe2,
@@ -199,11 +199,11 @@ var fileDescriptor_178e0e204cde370a = []byte{
 	0x12, 0xe3, 0x62, 0x2b, 0x4a, 0x2d, 0x2e, 0xcd, 0x29, 0x81, 0xaa, 0x87, 0xf2, 0x94, 0x54, 0xb9,
 	0x78, 0xc3, 0x52, 0x8b, 0x32, 0xd3, 0x2a, 0x61, 0x86, 0x8b, 0x70, 0xb1, 0x16, 0x14, 0xe5, 0xe7,
 	0xa7, 0x41, 0xd5, 0x41, 0x38, 0x4a, 0x1a, 0x5c, 0x7c, 0x30, 0x65, 0x58, 0x0d, 0xe4, 0x80, 0x19,
-	0x68, 0x54, 0xca, 0xc5, 0x1e, 0x9c, 0x5a, 0x54, 0x96, 0x99, 0x9c, 0x2a, 0x64, 0xce, 0xc5, 0x01,
-	0x73, 0x87, 0x90, 0xb0, 0x5e, 0x41, 0x92, 0x1e, 0x9a, 0x47, 0xa4, 0x44, 0x50, 0x05, 0x21, 0x26,
-	0x2b, 0x31, 0x08, 0x19, 0x72, 0xb1, 0x41, 0x6c, 0x13, 0x12, 0x04, 0xa9, 0x40, 0x71, 0xa0, 0x94,
-	0x10, 0xb2, 0x10, 0x4c, 0x4b, 0x12, 0x1b, 0x38, 0xc4, 0x8c, 0x01, 0x01, 0x00, 0x00, 0xff, 0xff,
-	0xe4, 0xa3, 0x14, 0x5a, 0x3e, 0x01, 0x00, 0x00,
+	0x68, 0x54, 0xc8, 0xc5, 0xec, 0xee, 0xec, 0x22, 0x64, 0xce, 0xc5, 0x01, 0x73, 0x83, 0x90, 0xb0,
+	0x5e, 0x41, 0x92, 0x1e, 0x9a, 0x27, 0xa4, 0x44, 0x50, 0x05, 0x21, 0xa6, 0x2a, 0x31, 0x08, 0x19,
+	0x72, 0xb1, 0x41, 0x6c, 0x12, 0x12, 0x04, 0xa9, 0x40, 0x71, 0x9c, 0x94, 0x10, 0xb2, 0x10, 0x4c,
+	0x4b, 0x12, 0x1b, 0x38, 0xb4, 0x8c, 0x01, 0x01, 0x00, 0x00, 0xff, 0xff, 0x69, 0x24, 0xec, 0x91,
+	0x3a, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -214,108 +214,108 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// ServiceClient is the client API for Service service.
+// GCDClient is the client API for GCD service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type ServiceClient interface {
+type GCDClient interface {
 	Generate(ctx context.Context, in *GenerateRequest, opts ...grpc.CallOption) (*GenerateResponse, error)
 	Verify(ctx context.Context, in *VerifyRequest, opts ...grpc.CallOption) (*VerifyResponse, error)
 }
 
-type serviceClient struct {
+type gCDClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewServiceClient(cc *grpc.ClientConn) ServiceClient {
-	return &serviceClient{cc}
+func NewGCDClient(cc *grpc.ClientConn) GCDClient {
+	return &gCDClient{cc}
 }
 
-func (c *serviceClient) Generate(ctx context.Context, in *GenerateRequest, opts ...grpc.CallOption) (*GenerateResponse, error) {
+func (c *gCDClient) Generate(ctx context.Context, in *GenerateRequest, opts ...grpc.CallOption) (*GenerateResponse, error) {
 	out := new(GenerateResponse)
-	err := c.cc.Invoke(ctx, "/pb.Service/Generate", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.GCD/Generate", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *serviceClient) Verify(ctx context.Context, in *VerifyRequest, opts ...grpc.CallOption) (*VerifyResponse, error) {
+func (c *gCDClient) Verify(ctx context.Context, in *VerifyRequest, opts ...grpc.CallOption) (*VerifyResponse, error) {
 	out := new(VerifyResponse)
-	err := c.cc.Invoke(ctx, "/pb.Service/Verify", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/pb.GCD/Verify", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// ServiceServer is the server API for Service service.
-type ServiceServer interface {
+// GCDServer is the server API for GCD service.
+type GCDServer interface {
 	Generate(context.Context, *GenerateRequest) (*GenerateResponse, error)
 	Verify(context.Context, *VerifyRequest) (*VerifyResponse, error)
 }
 
-// UnimplementedServiceServer can be embedded to have forward compatible implementations.
-type UnimplementedServiceServer struct {
+// UnimplementedGCDServer can be embedded to have forward compatible implementations.
+type UnimplementedGCDServer struct {
 }
 
-func (*UnimplementedServiceServer) Generate(ctx context.Context, req *GenerateRequest) (*GenerateResponse, error) {
+func (*UnimplementedGCDServer) Generate(ctx context.Context, req *GenerateRequest) (*GenerateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Generate not implemented")
 }
-func (*UnimplementedServiceServer) Verify(ctx context.Context, req *VerifyRequest) (*VerifyResponse, error) {
+func (*UnimplementedGCDServer) Verify(ctx context.Context, req *VerifyRequest) (*VerifyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Verify not implemented")
 }
 
-func RegisterServiceServer(s *grpc.Server, srv ServiceServer) {
-	s.RegisterService(&_Service_serviceDesc, srv)
+func RegisterGCDServer(s *grpc.Server, srv GCDServer) {
+	s.RegisterService(&_GCD_serviceDesc, srv)
 }
 
-func _Service_Generate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _GCD_Generate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GenerateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ServiceServer).Generate(ctx, in)
+		return srv.(GCDServer).Generate(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Service/Generate",
+		FullMethod: "/pb.GCD/Generate",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ServiceServer).Generate(ctx, req.(*GenerateRequest))
+		return srv.(GCDServer).Generate(ctx, req.(*GenerateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Service_Verify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _GCD_Verify_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(VerifyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ServiceServer).Verify(ctx, in)
+		return srv.(GCDServer).Verify(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.Service/Verify",
+		FullMethod: "/pb.GCD/Verify",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ServiceServer).Verify(ctx, req.(*VerifyRequest))
+		return srv.(GCDServer).Verify(ctx, req.(*VerifyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-var _Service_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.Service",
-	HandlerType: (*ServiceServer)(nil),
+var _GCD_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.GCD",
+	HandlerType: (*GCDServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Generate",
-			Handler:    _Service_Generate_Handler,
+			Handler:    _GCD_Generate_Handler,
 		},
 		{
 			MethodName: "Verify",
-			Handler:    _Service_Verify_Handler,
+			Handler:    _GCD_Verify_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -3,11 +3,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:005845848d5bb631cfe0dcae3e089332a8b5525cfd7c76aa21ef95cc7a2ec841"
+  digest = "1:6600e545fe6c21ee4889bb720ef3da6196ba30583b2f07f50c6cac43f1115a57"
   name = "github.com/alexdnn11/go-grpc-k8s"
   packages = ["pb"]
   pruneopts = "UT"
-  revision = "de31128587e71471d4381b56c10cb36d230e45e0"
+  revision = "7eef1ee507d4df753123ebc2ea517b7b89f24b97"
 
 [[projects]]
   digest = "1:f5ce1529abc1204444ec73779f44f94e2fa8fcdb7aca3c355b0c95947e4005c6"
@@ -71,7 +71,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:d31a812696686f0059241fa6c3b56d89ada56dddde4db1d5036de5c1084000c5"
+  digest = "1:1089c26a1b2dcc30f6a612adfce1d4ed8796b54c47ddec9c4d4d5f38a3edf5e7"
   name = "golang.org/x/net"
   packages = [
     "http/httpguts",
@@ -82,15 +82,15 @@
     "trace",
   ]
   pruneopts = "UT"
-  revision = "da137c7871d730100384dbcf36e6f8fa493aef5b"
+  revision = "ca1201d0de80cfde86cb01aea620983605dfe99b"
 
 [[projects]]
   branch = "master"
-  digest = "1:5b3f90037a9027c43bdcae488c39d41aadecb9d85e645bb62b773a0a6f6e86b8"
+  digest = "1:8d30f87f59931cdd4d45e450185216a34eba66c1f1f68a314ac0fa49d19f9826"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = "UT"
-  revision = "6ec70d6a5542cba804c6d16ebe8392601a0b7b60"
+  revision = "9eafafc0a87e0fd0aeeba439a4573537970c44c7"
 
 [[projects]]
   digest = "1:8d8faad6b12a3a4c819a3f9618cb6ee1fa1cfc33253abeeea8b55336721e3405"
@@ -123,10 +123,10 @@
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
   pruneopts = "UT"
-  revision = "3bdd9d9f5532d75d09efb230bd767d265245cfe5"
+  revision = "fa694d86fc64c7654a660f8908de4e879866748d"
 
 [[projects]]
-  digest = "1:cf01ae0753310464677058b125fa31e74fd943781782ada503180ad784fc83d3"
+  digest = "1:581c9b0fe9354faf730ff231cf3682089e0b703073cf10e3976219609d27a9ea"
   name = "google.golang.org/grpc"
   packages = [
     ".",
@@ -164,8 +164,8 @@
     "tap",
   ]
   pruneopts = "UT"
-  revision = "1d89a3c832915b2314551c1d2a506874d62e53f7"
-  version = "v1.22.0"
+  revision = "045159ad57f3781d409358e3ade910a018c16b30"
+  version = "v1.22.1"
 
 [solve-meta]
   analyzer-name = "dep"
@@ -176,6 +176,7 @@
     "github.com/hyperledger/fabric/idemix",
     "github.com/sirupsen/logrus",
     "google.golang.org/grpc",
+    "google.golang.org/grpc/credentials",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

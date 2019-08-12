@@ -18,7 +18,7 @@ message VerifyResponse {
     bool result = 1;
 }
 
-service Service {
+service GCD {
     rpc Generate (GenerateRequest) returns (GenerateResponse) {
     }
     rpc Verify (VerifyRequest) returns (VerifyResponse) {

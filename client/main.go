@@ -95,7 +95,7 @@ func main() {
 
 	defer conn.Close()
 
-	serviceClient := pb.NewServiceClient(conn)
+	serviceClient := pb.NewGCDClient(conn)
 
 	r := gin.Default()
 	r.POST("/generate", func(ctx *gin.Context) {

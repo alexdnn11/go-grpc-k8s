@@ -15,33 +15,49 @@
  * limitations under the License.
  *
  */
-var express = require('express');
-var app = express();
-var bodyParser = require('body-parser');
-
-var fs = require("fs");
-
-var messages = require('./gcd_pb');
-var services = require('./gcd_grpc_pb');
-
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
+const protoLoader = require('@grpc/proto-loader');
+const fs = require("fs");
 
 const PORT_GRPC = process.env.PORT_GRPC || 3000,
-    PORT_API = process.env.PORT_API || 3031,
+    PORT_API = process.env.PORT_API || 3030,
     GCD_SERVICE_NAME = process.env.GCD_SERVICE_NAME || 'localhost',
     HOST_NAME = process.env.HOST_NAME || 'localhost',
-    TLS_ENABLE = process.env.TLS_ENABLE || "false";
+    TLS_ENABLE = process.env.TLS_ENABLE || "false",
+    DEBUG_MODE = process.env.DEBUG_MODE || "true";
+
+let RP = './';
 
 console.info(`PORT_GRPC = ${PORT_GRPC}`);
 console.info(`PORT_API = ${PORT_API}`);
 console.info(`GCD_SERVICE_NAME = ${GCD_SERVICE_NAME}`);
 console.info(`HOST_NAME = ${HOST_NAME}`);
 console.info(`TLS_ENABLE = ${TLS_ENABLE}`);
+console.info(`DEBUG_MODE = ${DEBUG_MODE}`);
 
-var CA_CERTS = './certs/ca/rootCA.crt';
-var ROOT_CERTS = './certs/client/client.crt';
-var ROOT_KEY = './certs/client/client.key';
+if (DEBUG_MODE === "true") {
+    RP = '../';
+}
 
-var grpc = require('grpc');
+let CA_CERTS = RP + 'certs/ca/rootCA.crt';
+let ROOT_CERTS = RP + 'certs/client/client.crt';
+let ROOT_KEY = RP + 'certs/client/client.key';
+let PROTO_PATH = RP + 'pb/gcd.proto';
+
+let grpc = require('grpc');
+
+const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
+    keepCase: true,
+    longs: String,
+    enums: String,
+    defaults: true,
+    oneofs: true
+});
+
+const packageDescriptor = grpc.loadPackageDefinition(packageDefinition);
+const gcd_proto = packageDescriptor.pb;
 
 const cacert = fs.readFileSync(CA_CERTS),
     cert = fs.readFileSync(ROOT_CERTS),
@@ -54,41 +70,59 @@ const options = {
 
 const creds = grpc.credentials.createSsl(cacert, key, cert, options);
 
-function Generate(attributes) {
-
-    var client, request;
-
-    if (TLS_ENABLE === "true") {
-        client = new services.GCDServiceClient(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, creds);
-    } else {
-        client = new services.GCDServiceClient(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, grpc.credentials.createInsecure());
-    }
-
-    request = new messages.GenerateRequest();
-    request.setAttributes(attributes);
-
-    client.generate(request, function(err, response) {
-        if(err){
-            console.log(err);
-            return err;
-        }
-        console.log(`Greeting:, ${response}`);
-        return response;
-    });
-}
-
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 
 app.use(bodyParser.json());
 
-app.post('/generate', function (req, res) {
-    let attr = req.body.attributes ? req.body.attributes : null;
-    let arg = new Buffer.from(attr.toString());
-    console.log(arg);
-    Generate(arg);
-    res.send('Success!');
+app.post('/generate', (req, res) => {
+
+    let client;
+    let result;
+
+    let attrObj = req.body.attributes ? req.body.attributes : null;
+    let attrBytes = new Buffer.from(JSON.stringify(attrObj));
+
+    if (TLS_ENABLE === "true") {
+        client = new gcd_proto.GCD(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, creds);
+    } else {
+        client = new gcd_proto.GCD(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, grpc.credentials.createInsecure());
+    }
+
+    client.Generate({attributes: attrBytes}, (err, resGCD) => {
+        if (err == null) {
+            result = resGCD.result.toString();
+        }else{
+            result = `Error: ${err}`;
+        }
+        res.send({result: result});
+    });
+
+});
+
+app.post('/verify', (req, res) => {
+
+    let client;
+
+    let proofObj = req.body.proof ? req.body.proof : null;
+    let proofBytes = new Buffer.from(JSON.stringify(proofObj));
+
+    if (TLS_ENABLE === "true") {
+        client = new gcd_proto.GCD(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, creds);
+    } else {
+        client = new gcd_proto.GCD(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, grpc.credentials.createInsecure());
+    }
+
+    client.Verify({proof: proofBytes}, (err, resGCD) => {
+        if (err == null) {
+            result = resGCD.result.toString();
+        }else{
+            result = `Error: ${err}`;
+        }
+        res.send({result: result});
+    });
+
 });
 
 app.listen(PORT_API, function () {
