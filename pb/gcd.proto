@@ -1,10 +1,5 @@
 syntax = "proto3";
 
-option java_multiple_files = true;
-option java_package = "io.grpc.examples.gcd";
-option java_outer_classname = "GCDProto";
-option objc_class_prefix = "GCD";
-
 package pb;
 
 message GenerateRequest {
@@ -23,7 +18,7 @@ message VerifyResponse {
     bool result = 1;
 }
 
-service GCDService {
+service GCD {
     rpc Generate (GenerateRequest) returns (GenerateResponse) {
     }
     rpc Verify (VerifyRequest) returns (VerifyResponse) {
