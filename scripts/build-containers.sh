@@ -6,7 +6,7 @@ docker build -t local/api:latest -f Dockerfile.api .
 
 echo "Building gcd"
 
-docker build -t local/gcd:latest -f Dockerfile.gcd .
+docker build -t local/ms-s:dev -f Dockerfile.ms .
 
 echo "Building node"
 

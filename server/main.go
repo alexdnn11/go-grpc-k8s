@@ -9,7 +9,7 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
-	"github.com/alexdnn11/go-grpc-k8s/pb"
+	"go-grpc-k8s/pb"
 	"github.com/hyperledger/fabric-amcl/amcl/FP256BN"
 	"github.com/hyperledger/fabric/idemix"
 	log "github.com/sirupsen/logrus"
@@ -304,7 +304,7 @@ func main() {
 		s = grpc.NewServer()
 	}
 
-	pb.RegisterGCDServer(s, &server{})
+	pb.RegisterIdemixServer(s, &server{})
 	if err := s.Serve(lis); err != nil {
 		log.Fatal("Failed to serve: %v", err)
 	}

@@ -44,7 +44,7 @@ if (DEBUG_MODE === "true") {
 let CA_CERTS = RP + 'certs/ca/rootCA.crt';
 let ROOT_CERTS = RP + 'certs/client/client.crt';
 let ROOT_KEY = RP + 'certs/client/client.key';
-let PROTO_PATH = RP + 'pb/gcd.proto';
+let PROTO_PATH = RP + 'pb/idemix.proto';
 
 let grpc = require('grpc');
 
@@ -85,9 +85,9 @@ app.post('/generate', (req, res) => {
     let attrBytes = new Buffer.from(JSON.stringify(attrObj));
 
     if (TLS_ENABLE === "true") {
-        client = new gcd_proto.GCD(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, creds);
+        client = new gcd_proto.Idemix(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, creds);
     } else {
-        client = new gcd_proto.GCD(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, grpc.credentials.createInsecure());
+        client = new gcd_proto.Idemix(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, grpc.credentials.createInsecure());
     }
 
     client.Generate({attributes: attrBytes}, (err, resGCD) => {
@@ -109,9 +109,9 @@ app.post('/verify', (req, res) => {
     let proofBytes = new Buffer.from(JSON.stringify(proofObj));
 
     if (TLS_ENABLE === "true") {
-        client = new gcd_proto.GCD(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, creds);
+        client = new gcd_proto.Idemix(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, creds);
     } else {
-        client = new gcd_proto.GCD(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, grpc.credentials.createInsecure());
+        client = new gcd_proto.Idemix(`${GCD_SERVICE_NAME}:${PORT_GRPC}`, grpc.credentials.createInsecure());
     }
 
     client.Verify({proof: proofBytes}, (err, resGCD) => {

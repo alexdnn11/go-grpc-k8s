@@ -1,10 +1,10 @@
 version: '2'
 services:
-  gcd.example.com:
-    container_name: gcd.example.com
+  ms-s.example.com:
+    container_name: ms-s.example.com
     build: .
     command: go run main.go
-    image: local/gcd:latest
+    image: local/ms-s:dev
     restart: always
     ports:
       - "3000:3000"
@@ -12,7 +12,7 @@ services:
       PORT_GRPC: 3000
       TLS_ENABLE: $TLS
     volumes:
-      - ./certs:/go/src/github.com/alexdnn11/go-grpc-k8s/server/certs
+      - ./certs:/go/src/go-grpc-k8s/server/certs
 
   api-go.example.com:
     container_name: api-go.example.com
@@ -21,16 +21,16 @@ services:
     image: local/api:latest
     restart: always
     depends_on:
-      - gcd.example.com
+      - ms-s.example.com
     ports:
      - "8080:8080"
     environment:
       PORT_API: 8080
       PORT_GRPC: 3000
-      GCD_SERVICE_NAME: gcd.example.com
+      GCD_SERVICE_NAME: ms-s.example.com
       TLS_ENABLE: $TLS
     volumes:
-      - ./certs:/go/src/github.com/alexdnn11/go-grpc-k8s/client/certs
+      - ./certs:/go/src/go-grpc-k8s/client/certs
 
   api.example.com:
     container_name: api.example.com
@@ -39,13 +39,13 @@ services:
     image: local/api-node:latest
     restart: always
     depends_on:
-      - gcd.example.com
+      - ms-s.example.com
     ports:
       - "3030:3030"
     environment:
       PORT_API: 3030
       PORT_GRPC: 3000
-      GCD_SERVICE_NAME: gcd.example.com
+      GCD_SERVICE_NAME: ms-s.example.com
       HOST_NAME: api.example.com
       TLS_ENABLE: $TLS
       DEBUG_MODE: $DEBUG_MODE

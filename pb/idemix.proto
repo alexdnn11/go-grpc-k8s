@@ -18,7 +18,7 @@ message VerifyResponse {
     bool result = 1;
 }
 
-service GCD {
+service Idemix {
     rpc Generate (GenerateRequest) returns (GenerateResponse) {
     }
     rpc Verify (VerifyRequest) returns (VerifyResponse) {

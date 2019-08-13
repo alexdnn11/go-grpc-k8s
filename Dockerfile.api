@@ -2,8 +2,8 @@ FROM golang:alpine
 
 MAINTAINER alexdnn11
 
-WORKDIR $GOPATH/src/github.com/alexdnn11/go-grpc-k8s/client
+WORKDIR $GOPATH/src/go-grpc-k8s/client
 COPY client .
-COPY pb ../pb
+COPY pb $GOPATH/src/go-grpc-k8s/client/vendor/go-grpc-k8s/pb
 
 CMD [ "go", "run", "main.go" ]
