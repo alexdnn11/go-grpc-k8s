@@ -9,7 +9,6 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
-	"go-grpc-k8s/pb"
 	"github.com/hyperledger/fabric-amcl/amcl/FP256BN"
 	"github.com/hyperledger/fabric/idemix"
 	log "github.com/sirupsen/logrus"
@@ -18,6 +17,7 @@ import (
 	"math/rand"
 	"net"
 	"os"
+	"go-grpc-k8s/pb"
 )
 
 type server struct{}
@@ -27,14 +27,14 @@ type ProofKey struct {
 }
 
 type ProofValue struct {
-	Signature           []byte                   `json:"signature"`
-	DataForVerification ProofDataForVerification `json:"dataForVerification"`
-	State               int                      `json:"state"`
-	ConsignorName       string                   `json:"consignorName"`
-	Owner               string                   `json:"owner"`
-	Timestamp           int64                    `json:"timestamp"`
-	ShipmentID          string                   `json:"shipmentID"`
-	UpdatedDate         int64                    `json:"updatedDate"`
+	Signature           []byte `json:"signature"`
+	DataForVerification []byte `json:"dataForVerification"`
+	State               int    `json:"state"`
+	ConsignorName       string `json:"consignorName"`
+	Owner               string `json:"owner"`
+	Timestamp           int64  `json:"timestamp"`
+	ShipmentID          string `json:"shipmentID"`
+	UpdatedDate         int64  `json:"updatedDate"`
 }
 
 type ProofDataForVerification struct {
@@ -70,6 +70,7 @@ func (s *server) Generate(ctx context.Context, r *pb.GenerateRequest) (*pb.Gener
 	log.Debug(ctx)
 
 	proof := Proof{}
+	data := ProofDataForVerification{}
 
 	// making arrays of attributes names and values
 	rng, err := idemix.GetRand()
@@ -180,14 +181,23 @@ func (s *server) Generate(ctx context.Context, r *pb.GenerateRequest) (*pb.Gener
 	}
 
 	proof.Value.Signature = sigBytes
-	proof.Value.DataForVerification.Disclosure = disclosure
-	proof.Value.DataForVerification.Ipk = ipkBytes
-	proof.Value.DataForVerification.Msg = msg
-	proof.Value.DataForVerification.AttributeValuesHash = attributeValuesBytes
-	proof.Value.DataForVerification.AttributeValues = attributeValues
-	proof.Value.DataForVerification.RhIndex = rhindex
-	proof.Value.DataForVerification.RevPk = encode(&revocationKey.PublicKey)
-	proof.Value.DataForVerification.Epoch = epoch
+	data.Disclosure = disclosure
+	data.Ipk = ipkBytes
+	data.Msg = msg
+	data.AttributeValuesHash = attributeValuesBytes
+	data.AttributeValues = attributeValues
+	data.RhIndex = rhindex
+	data.RevPk = encode(&revocationKey.PublicKey)
+	data.Epoch = epoch
+
+	dataBytes, err := json.Marshal(data)
+	if err != nil {
+		message := fmt.Sprintf("ProofDataForVerification marshaling error: %s", err.Error())
+		fmt.Println(message)
+		return &pb.GenerateResponse{Result: nil}, errors.New(message)
+	}
+
+	proof.Value.DataForVerification = dataBytes
 
 	result, err := json.Marshal(proof)
 	if err != nil {
@@ -207,6 +217,7 @@ func (s *server) Verify(ctx context.Context, r *pb.VerifyRequest) (*pb.VerifyRes
 	log.Debug(ctx)
 
 	proof := Proof{}
+	data :=ProofDataForVerification{}
 
 	err := json.Unmarshal([]byte(r.Proof), &proof)
 	if err != nil {
@@ -225,25 +236,32 @@ func (s *server) Verify(ctx context.Context, r *pb.VerifyRequest) (*pb.VerifyRes
 		return &pb.VerifyResponse{Result: false}, err
 	}
 
-	err = json.Unmarshal([]byte(proof.Value.DataForVerification.Ipk), &ipk)
+	err = json.Unmarshal([]byte(proof.Value.DataForVerification), &data)
 	if err != nil {
 		message := fmt.Sprintf("Input json is invalid. Error \"%s\"", err.Error())
 		fmt.Println(message)
 		return &pb.VerifyResponse{Result: false}, err
 	}
 
-	attributeValuesBytes := make([]*FP256BN.BIG, len(proof.Value.DataForVerification.AttributeValuesHash))
-
-	for i := range proof.Value.DataForVerification.AttributeValuesHash {
-		attributeValuesBytes[i] = FP256BN.FromBytes(proof.Value.DataForVerification.AttributeValuesHash[i])
+	err = json.Unmarshal([]byte(data.Ipk), &ipk)
+	if err != nil {
+		message := fmt.Sprintf("Input json is invalid. Error \"%s\"", err.Error())
+		fmt.Println(message)
+		return &pb.VerifyResponse{Result: false}, err
 	}
-	err = sig.Ver(proof.Value.DataForVerification.Disclosure,
+
+	attributeValuesBytes := make([]*FP256BN.BIG, len(data.AttributeValuesHash))
+
+	for i := range data.AttributeValuesHash {
+		attributeValuesBytes[i] = FP256BN.FromBytes(data.AttributeValuesHash[i])
+	}
+	err = sig.Ver(data.Disclosure,
 		ipk,
-		proof.Value.DataForVerification.Msg,
+		data.Msg,
 		attributeValuesBytes,
-		proof.Value.DataForVerification.RhIndex,
-		decode(proof.Value.DataForVerification.RevPk),
-		proof.Value.DataForVerification.Epoch)
+		data.RhIndex,
+		decode(data.RevPk),
+		data.Epoch)
 
 	if err != nil {
 		message := fmt.Sprintf("Signature verification was failed. Error: %s", err.Error())
@@ -274,17 +292,17 @@ func decode(pemEncodedPub string) *ecdsa.PublicKey {
 
 func main() {
 
-	var PORT_GRPC, TLS_ENABLE string
+	var PORT_GRPC, TLS string
 
 	if PORT_GRPC = os.Getenv("PORT_GRPC"); PORT_GRPC == "" {
-		PORT_GRPC = "3000"
+		PORT_GRPC = "5000"
 	}
 	log.Info(fmt.Sprintf("Service port: %s", PORT_GRPC))
 
-	if TLS_ENABLE = os.Getenv("TLS_ENABLE"); TLS_ENABLE == "" {
-		TLS_ENABLE = "false"
+	if TLS = os.Getenv("TLS_ENABLE"); TLS == "" {
+		TLS = "false"
 	}
-	log.Info(fmt.Sprintf("TLS_ENABLE: %s", TLS_ENABLE))
+	log.Info(fmt.Sprintf("TLS_ENABLE: %s", TLS))
 
 	lis, err := net.Listen("tcp", ":"+PORT_GRPC)
 	if err != nil {
@@ -298,9 +316,9 @@ func main() {
 
 	var s *grpc.Server
 
-	if TLS_ENABLE == "true" {
+	if TLS == "true" {
 		s = grpc.NewServer(grpc.Creds(creds))
-	}else{
+	} else {
 		s = grpc.NewServer()
 	}
 

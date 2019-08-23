@@ -17,14 +17,14 @@ type ProofKey struct {
 }
 
 type ProofValue struct {
-	Signature           []byte                   `json:"signature"`
-	DataForVerification ProofDataForVerification `json:"dataForVerification"`
-	State               int                      `json:"state"`
-	ConsignorName       string                   `json:"consignorName"`
-	Owner               string                   `json:"owner"`
-	Timestamp           int64                    `json:"timestamp"`
-	ShipmentID          string                   `json:"shipmentID"`
-	UpdatedDate         int64                    `json:"updatedDate"`
+	Signature           []byte `json:"signature"`
+	DataForVerification []byte `json:"dataForVerification"`
+	State               int    `json:"state"`
+	ConsignorName       string `json:"consignorName"`
+	Owner               string `json:"owner"`
+	Timestamp           int64  `json:"timestamp"`
+	ShipmentID          string `json:"shipmentID"`
+	UpdatedDate         int64  `json:"updatedDate"`
 }
 
 type ProofDataForVerification struct {

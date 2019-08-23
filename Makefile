@@ -11,6 +11,7 @@ help:
 	@echo ""
 
 generate:
+	./scripts/gen-certs.sh
 	./scripts/gen-pb.sh
 	./scripts/build-containers.sh
 
